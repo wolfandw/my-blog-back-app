@@ -1,8 +1,7 @@
 package io.github.wolfandw.controller;
 
-import io.github.wolfandw.dto.ImageResponseDto;
+import io.github.wolfandw.service.PostImageService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,12 +9,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/posts")
 public class PostImageController {
+    private final PostImageService postImageService;
+
+    public PostImageController(PostImageService postImageService) {
+        this.postImageService = postImageService;
+    }
+
     @GetMapping("/{postId}/image")
     public ResponseEntity<byte[]> getPostImage(@PathVariable("postId") Long postId) {
-        ImageResponseDto imageResponse = new ImageResponseDto(new byte[]{1, 2, 3}, MediaType.IMAGE_PNG) ;
-        return ResponseEntity.ok()
-                .contentType(imageResponse.mediaType())
-                .body(imageResponse.data());
+        return postImageService.getPostImage(postId);
     }
 
     @PutMapping("/{postId}/image")
@@ -23,5 +25,6 @@ public class PostImageController {
     public void updatePostImage(
             @PathVariable("postId") Long postId,
             @RequestParam("image") MultipartFile image) {
+        postImageService.updatePostImage(postId, image);
     }
 }

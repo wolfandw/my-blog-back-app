@@ -6,6 +6,6 @@ public record PostResponseDto(Long id,
                               String title,
                               String text,
                               List<String> tags,
-                              Integer likesCount,
-                              Integer commentsCount) {
+                              int likesCount,
+                              int commentsCount) {
 }
