@@ -1,29 +1,21 @@
 package io.github.wolfandw.service;
 
-import io.github.wolfandw.dto.PostCreateRequestDto;
-import io.github.wolfandw.dto.PostListResponseDto;
-import io.github.wolfandw.dto.PostResponseDto;
-import io.github.wolfandw.dto.PostUpdateRequestDto;
+import io.github.wolfandw.model.Post;
+import io.github.wolfandw.model.PostsPage;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface PostService {
-    PostListResponseDto getPosts(
-            String search,
-            int pageNumber,
-            int pageSize);
+    PostsPage getPostsPage(String search, int pageNumber, int pageSize);
 
-    PostResponseDto getPost(Long id);
+    Optional<Post> getPost(Long postId);
 
-    PostResponseDto createPost(PostCreateRequestDto postRequest);
+    Optional<Post> createPost(String title, String text, List<String> tags);
 
-    PostResponseDto updatePost(
-            Long id,
-            PostUpdateRequestDto postRequest);
+    Optional<Post> updatePost(Long postId, String title, String text, List<String> tags);
 
-    void deletePost(Long id);
+    void deletePost(Long postId);
 
-    int increaseLikesCount(Long id);
-
-    void increaseCommentCount(Long id);
-
-    void decreaseCommentCount(Long id);
+    int increaseLikesCount(Long postId);
 }

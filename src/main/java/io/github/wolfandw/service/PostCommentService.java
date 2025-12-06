@@ -1,19 +1,18 @@
 package io.github.wolfandw.service;
 
-import io.github.wolfandw.dto.PostCommentCreateRequestDto;
-import io.github.wolfandw.dto.PostCommentResponseDto;
-import io.github.wolfandw.dto.PostCommentUpdateRequestDto;
+import io.github.wolfandw.model.PostComment;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostCommentService {
-    List<PostCommentResponseDto> getComments(Long postId);
+    List<PostComment> getComments(Long postId);
 
-    PostCommentResponseDto getComment(Long postId, Long commentId);
+    Optional<PostComment> getComment(Long postId, Long commentId);
 
-    PostCommentResponseDto createComment(Long postId, PostCommentCreateRequestDto commentRequest);
+    Optional<PostComment> createComment(Long postId, String text);
 
-    PostCommentResponseDto updateComment(Long postId, Long commentId, PostCommentUpdateRequestDto commentRequest);
+    Optional<PostComment> updateComment(Long postId, Long commentId, String text);
 
     void deleteComment(Long postId, Long commentId);
 }

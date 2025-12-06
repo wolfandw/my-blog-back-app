@@ -1,12 +1,16 @@
 package io.github.wolfandw.controller;
 
 import io.github.wolfandw.dto.PostCreateRequestDto;
-import io.github.wolfandw.dto.PostListResponseDto;
 import io.github.wolfandw.dto.PostResponseDto;
 import io.github.wolfandw.dto.PostUpdateRequestDto;
+import io.github.wolfandw.dto.PostsPageResponseDto;
+import io.github.wolfandw.model.Post;
+import io.github.wolfandw.model.PostsPage;
 import io.github.wolfandw.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/posts")
@@ -18,29 +22,37 @@ public class PostController {
     }
 
     @GetMapping
-    public PostListResponseDto getPosts(
+    public PostsPageResponseDto getPosts(
             @RequestParam("search") String search,
             @RequestParam("pageNumber") int pageNumber,
             @RequestParam("pageSize") int pageSize) {
-        return postService.getPosts(search, pageNumber, pageSize);
+        PostsPage postsPage = postService.getPostsPage(search, pageNumber, pageSize);
+        List<Post> posts = postsPage.getPosts();
+        int postsCount = postsPage.getPostsCount();
+
+        int lastPage = (int) Math.ceil((double) postsCount / pageSize);
+        boolean hasPrev = pageNumber > 1;
+        boolean hasNext = pageNumber < lastPage;
+
+        return new PostsPageResponseDto(posts.stream().map(this::mapPostToPostResponseDto).toList(), hasPrev, hasNext, lastPage);
     }
 
     @GetMapping("/{id}")
     public PostResponseDto getPost(@PathVariable("id") Long id) {
-        return postService.getPost(id);
+        return postService.getPost(id).map(this::mapPostToPostResponseDto).orElse(null);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PostResponseDto createPost(@RequestBody PostCreateRequestDto postRequest) {
-        return postService.createPost(postRequest);
+        return postService.createPost(postRequest.title(), postRequest.text(), postRequest.tags()).map(this::mapPostToPostResponseDto).orElse(null);
     }
 
     @PutMapping("/{id}")
     public PostResponseDto updatePost(
             @PathVariable("id") Long id,
             @RequestBody PostUpdateRequestDto postRequest) {
-        return postService.updatePost(id, postRequest);
+        return postService.updatePost(id, postRequest.title(), postRequest.text(), postRequest.tags()).map(this::mapPostToPostResponseDto).orElse(null);
     }
 
     @DeleteMapping("/{id}")
@@ -50,7 +62,11 @@ public class PostController {
     }
 
     @PostMapping("/{id}/likes")
-    public Integer addLike(@PathVariable("id") Long id) {
+    public Integer increaseLikesCount(@PathVariable("id") Long id) {
         return postService.increaseLikesCount(id);
+    }
+
+    private PostResponseDto mapPostToPostResponseDto(Post post) {
+        return new PostResponseDto(post.getId(), post.getTitle(), post.getText(), post.getTags(), post.getLikesCount(), post.getCommentsCount());
     }
 }

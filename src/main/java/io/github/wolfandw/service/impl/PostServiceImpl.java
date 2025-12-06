@@ -1,115 +1,59 @@
 package io.github.wolfandw.service.impl;
 
-import io.github.wolfandw.dto.PostCreateRequestDto;
-import io.github.wolfandw.dto.PostListResponseDto;
-import io.github.wolfandw.dto.PostResponseDto;
-import io.github.wolfandw.dto.PostUpdateRequestDto;
+import io.github.wolfandw.model.Post;
+import io.github.wolfandw.model.PostsPage;
+import io.github.wolfandw.repository.PostCommentRepository;
+import io.github.wolfandw.repository.PostImageRepository;
+import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.service.PostService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
-    public static final List<PostResponseDto> POST_REPOSITORY = new ArrayList<>();
-    private static Long maxId = 1L;
+    private final PostRepository postRepository;
+    private final PostImageRepository postImageRepository;
+    private final PostCommentRepository postCommentRepository;
 
-    public PostServiceImpl() {
-        IntStream.range(1, 4).forEach(i ->
-                POST_REPOSITORY.add(createPost(new PostCreateRequestDto(
-                        "Post " + i + " title",
-                        "Post " + i + "  text",
-                        List.of("tag_1", "tag_2")))));
+    public PostServiceImpl(PostRepository postRepository, PostImageRepository postImageRepository, PostCommentRepository postCommentRepository) {
+        this.postRepository = postRepository;
+        this.postImageRepository = postImageRepository;
+        this.postCommentRepository = postCommentRepository;
     }
 
     @Override
-    public PostListResponseDto getPosts(String search, int pageNumber, int pageSize) {
-        return new PostListResponseDto(POST_REPOSITORY, false, false, 1);
+    public PostsPage getPostsPage(String search, int pageNumber, int pageSize) {
+        List<Post> posts = postRepository.getPosts(search, pageNumber, pageSize);
+        int postsCount = postRepository.getPostsCount();
+        return new PostsPage(posts, postsCount);
     }
 
     @Override
-    public PostResponseDto getPost(Long id) {
-        for (PostResponseDto postResponseDto : POST_REPOSITORY) {
-            if (postResponseDto.id().equals(id)) {
-                return postResponseDto;
-            }
-        }
-        return null;
+    public Optional<Post> getPost(Long postId) {
+        return postRepository.getPost(postId);
     }
 
     @Override
-    public PostResponseDto createPost(PostCreateRequestDto postRequest) {
-        PostResponseDto postResponseDto = new PostResponseDto(
-                maxId,
-                postRequest.title(),
-                postRequest.text(),
-                postRequest.tags(),
-                0,
-                0);
-        maxId++;
-        return postResponseDto;
+    public Optional<Post> createPost(String title, String text, List<String> tags) {
+        return postRepository.createPost(title, text, tags);
     }
 
     @Override
-    public PostResponseDto updatePost(Long id, PostUpdateRequestDto postRequest) {
-        PostResponseDto source = getPost(id);
-        PostResponseDto target = new PostResponseDto(
-                source.id(),
-                postRequest.title(),
-                postRequest.text(),
-                postRequest.tags(),
-                source.likesCount(),
-                source.commentsCount());
-        POST_REPOSITORY.set(target.id().intValue() - 1, target);
-        return target;
+    public Optional<Post> updatePost(Long postId, String title, String text, List<String> tags) {
+        return postRepository.updatePost(postId, title, text, tags);
     }
 
     @Override
-    public void deletePost(Long id) {
-        PostCommentServiceImpl.POST_COMMENT_REPOSITORY.get(id).removeIf(comment -> comment.postId().equals(id));
-        PostImageServiceImpl.POST_IMAGE_REPOSITORY.remove(id);
-        POST_REPOSITORY.removeIf(post -> post.id().equals(id));
+    public void deletePost(Long postId) {
+        postCommentRepository.deleteComments(postId);
+        postImageRepository.deletePostImage(postId);
+        postRepository.deletePost(postId);
     }
 
     @Override
-    public int increaseLikesCount(Long id) {
-        PostResponseDto source = getPost(id);
-        PostResponseDto target = new PostResponseDto(
-                source.id(),
-                source.title(),
-                source.text(),
-                source.tags(),
-                source.likesCount() + 1,
-                source.commentsCount());
-        POST_REPOSITORY.set(target.id().intValue() - 1, target);
-        return target.likesCount();
-    }
-
-    @Override
-    public void increaseCommentCount(Long id) {
-        PostResponseDto source = getPost(id);
-        PostResponseDto target = new PostResponseDto(
-                source.id(),
-                source.title(),
-                source.text(),
-                source.tags(),
-                source.likesCount(),
-                source.commentsCount() + 1);
-        POST_REPOSITORY.set(target.id().intValue() - 1, target);
-    }
-
-    @Override
-    public void decreaseCommentCount(Long id) {
-        PostResponseDto source = getPost(id);
-        PostResponseDto target = new PostResponseDto(
-                source.id(),
-                source.title(),
-                source.text(),
-                source.tags(),
-                source.likesCount(),
-                source.commentsCount() - 1);
-        POST_REPOSITORY.set(target.id().intValue() - 1, target);
+    public int increaseLikesCount(Long postId) {
+        return postRepository.increaseLikesCount(postId);
     }
 }
