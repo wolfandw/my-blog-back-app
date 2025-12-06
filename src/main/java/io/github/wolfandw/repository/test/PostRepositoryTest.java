@@ -1,7 +1,8 @@
-package io.github.wolfandw.repository.impl;
+package io.github.wolfandw.repository.test;
 
 import io.github.wolfandw.model.Post;
 import io.github.wolfandw.repository.PostRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,16 +10,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+@Primary
 @Repository
-public class PostRepositoryImpl implements PostRepository {
+public class PostRepositoryTest implements PostRepository {
     private static final List<Post> POST_REPOSITORY = new ArrayList<>();
     private static Long maxId = 1L;
 
-    public PostRepositoryImpl() {
+    public PostRepositoryTest() {
         IntStream.range(1, 4).forEach(i ->
                 createPost(
-                        "Post " + i + " title",
-                        "Post " + i + "  text",
+                        "Test Post " + i + " title",
+                        "Test Post " + i + "  text",
                         List.of("tag_1", "tag_2"))
                         .ifPresent(post -> {
                             post.setCommentsCount(i);
