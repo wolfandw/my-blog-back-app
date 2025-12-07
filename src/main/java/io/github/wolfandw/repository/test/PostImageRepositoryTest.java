@@ -2,7 +2,6 @@ package io.github.wolfandw.repository.test;
 
 import io.github.wolfandw.model.PostImage;
 import io.github.wolfandw.repository.PostImageRepository;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-@Primary
 @Repository
 public class PostImageRepositoryTest implements PostImageRepository {
     public static final Map<Long, PostImage> POST_IMAGE_REPOSITORY = new HashMap<>();

@@ -10,6 +10,7 @@ public class Post {
     private List<String> tags = new ArrayList<>();
     private int likesCount;
     private int commentsCount;
+    private String image;
 
     public Post(Long id,
                 String title,
@@ -63,5 +64,13 @@ public class Post {
 
     public void setCommentsCount(int commentsCount) {
         this.commentsCount = commentsCount;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

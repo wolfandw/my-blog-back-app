@@ -87,5 +87,17 @@ public class PostRepositoryTest implements PostRepository {
     public int getPostsCount() {
         return POST_REPOSITORY.size();
     }
+
+    @Override
+    public void setImage(Long postId, String imageName) {
+        Optional<Post> post = getPost(postId);
+        post.ifPresent(p -> p.setImage(imageName));
+    }
+
+    @Override
+    public Optional<String> getImage(Long postId) {
+        Optional<Post> post = getPost(postId);
+        return post.map(Post::getImage);
+    }
 }
 

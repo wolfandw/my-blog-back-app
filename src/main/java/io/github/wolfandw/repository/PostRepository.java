@@ -23,5 +23,9 @@ public interface PostRepository {
     void decreaseCommentCount(Long id);
 
     int getPostsCount();
+
+    void setImage(Long postId, String imageName);
+
+    Optional<String> getImage(Long postId);
 }
 
