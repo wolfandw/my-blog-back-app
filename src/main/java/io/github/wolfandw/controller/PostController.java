@@ -30,14 +30,14 @@ public class PostController {
             @RequestParam("pageNumber") int pageNumber,
             @RequestParam("pageSize") int pageSize) {
         PostsPage postsPage = postService.getPostsPage(search, pageNumber, pageSize);
-        List<Post> posts = postsPage.getPosts();
+        List<Post> postOnPage = postsPage.getPosts();
         int postsCount = postsPage.getPostsCount();
 
         int lastPage = (int) Math.ceil((double) postsCount / pageSize);
         boolean hasPrev = pageNumber > 1;
         boolean hasNext = pageNumber < lastPage;
 
-        return new PostsPageResponseDto(posts.stream().map(postToDtoMapper::mapPostToPostResponseDto).toList(), hasPrev, hasNext, lastPage);
+        return new PostsPageResponseDto(postOnPage.stream().map(postToDtoMapper::mapPostToPostResponseDto).toList(), hasPrev, hasNext, lastPage);
     }
 
     @GetMapping("/{id}")

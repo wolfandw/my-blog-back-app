@@ -8,6 +8,7 @@ import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.service.PostService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostsPage getPostsPage(String search, int pageNumber, int pageSize) {
-        List<Post> posts = postRepository.getPosts(search, pageNumber, pageSize);
-        int postsCount = postRepository.getPostsCount();
+        List<String> searchWords = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
+        for (String word : search.split("\\s+")) {
+            if (word.startsWith("#")) {
+                tags.add(word.substring(1));
+            } else if (!word.isEmpty()) {
+                searchWords.add(word);
+            }
+        }
+
+        List<Post> posts = postRepository.getPosts(searchWords, tags, pageNumber, pageSize);
+        int postsCount = postRepository.getPostsCount(searchWords, tags);
+
         return new PostsPage(posts, postsCount);
     }
 

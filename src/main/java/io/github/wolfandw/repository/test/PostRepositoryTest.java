@@ -2,7 +2,6 @@ package io.github.wolfandw.repository.test;
 
 import io.github.wolfandw.model.Post;
 import io.github.wolfandw.repository.PostRepository;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-@Primary
 @Repository
 public class PostRepositoryTest implements PostRepository {
     private static final List<Post> POST_REPOSITORY = new ArrayList<>();
@@ -25,18 +23,19 @@ public class PostRepositoryTest implements PostRepository {
                         .ifPresent(post -> {
                             post.setCommentsCount(i);
                             post.setLikesCount(i);
+                            post.setImage(i + ".png");
                             POST_REPOSITORY.add(post);
                         }));
     }
 
     @Override
-    public List<Post> getPosts(String search, int pageNumber, int pageSize) {
+    public List<Post> getPosts(List<String> searchWords, List<String> tags, int pageNumber, int pageSize) {
         return new ArrayList<>(POST_REPOSITORY);
     }
 
     @Override
-    public Optional<Post> getPost(Long id) {
-        return POST_REPOSITORY.stream().filter(post -> post.getId().equals(id)).findAny();
+    public Optional<Post> getPost(Long postId) {
+        return POST_REPOSITORY.stream().filter(post -> post.getId().equals(postId)).findAny();
     }
 
     @Override
@@ -45,12 +44,15 @@ public class PostRepositoryTest implements PostRepository {
                 maxId++,
                 title,
                 text,
-                tags));
+                tags,
+                0,
+                0,
+                ""));
     }
 
     @Override
-    public Optional<Post> updatePost(Long id, String title, String text, List<String> tags) {
-        Optional<Post> post = getPost(id);
+    public Optional<Post> updatePost(Long postId, String title, String text, List<String> tags) {
+        Optional<Post> post = getPost(postId);
         post.ifPresent(p -> {
             p.setTitle(title);
             p.setText(text);
@@ -60,31 +62,31 @@ public class PostRepositoryTest implements PostRepository {
     }
 
     @Override
-    public void deletePost(Long id) {
-        POST_REPOSITORY.removeIf(post -> post.getId().equals(id));
+    public void deletePost(Long postId) {
+        POST_REPOSITORY.removeIf(post -> post.getId().equals(postId));
     }
 
     @Override
-    public int increaseLikesCount(Long id) {
-        Optional<Post> post = getPost(id);
+    public int increaseLikesCount(Long postId) {
+        Optional<Post> post = getPost(postId);
         post.ifPresent(p -> p.setLikesCount(p.getLikesCount() + 1));
         return post.map(Post::getLikesCount).orElse(-1);
     }
 
     @Override
-    public void increaseCommentCount(Long id) {
-        Optional<Post> post = getPost(id);
+    public void increaseCommentCount(Long postId) {
+        Optional<Post> post = getPost(postId);
         post.ifPresent(p -> p.setCommentsCount(p.getCommentsCount() + 1));
     }
 
     @Override
-    public void decreaseCommentCount(Long id) {
-        Optional<Post> post = getPost(id);
+    public void decreaseCommentCount(Long postId) {
+        Optional<Post> post = getPost(postId);
         post.ifPresent(p -> p.setCommentsCount(p.getCommentsCount() - 1));
     }
 
     @Override
-    public int getPostsCount() {
+    public int getPostsCount(List<String> searchWords, List<String> tags) {
         return POST_REPOSITORY.size();
     }
 
