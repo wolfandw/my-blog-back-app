@@ -6,8 +6,6 @@ import io.github.wolfandw.service.PostImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 @Service
 public class PostImageServiceImpl implements PostImageService {
     private final PostImageRepository postImageRepository;
@@ -17,7 +15,7 @@ public class PostImageServiceImpl implements PostImageService {
     }
 
     @Override
-    public Optional<PostImage> getPostImage(Long postId) {
+    public PostImage getPostImage(Long postId) {
         return postImageRepository.getPostImage(postId);
     }
 

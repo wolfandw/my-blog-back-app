@@ -41,7 +41,7 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Optional<Post> getPost(Long postId) {
-        Optional<Post> post = Optional.ofNullable(queryPost(postId));
+        Optional<Post> post = queryPost(postId);
         post.ifPresent(p -> {
             List<String> postTags = queryPostsTags(new Long[]{postId}).stream().map(PostTag::getName).toList();
             p.setTags(postTags);
@@ -79,8 +79,8 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public int getPostsCount(List<String> searchWords, List<String> tags) {
-        Integer postsCount = queryPostsCount(searchWords, tags);
-        return postsCount == null ? 0 : postsCount;
+        Optional<Integer> postsCount = queryPostsCount(searchWords, tags);
+        return postsCount.orElse(0);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class PostRepositoryImpl implements PostRepository {
         return jdbcTemplate.query(query, args.toArray(), toIntArray(argTypes), postRowMapper);
     }
 
-    private Integer queryPostsCount(List<String> searchWords, List<String> tags) {
+    private Optional<Integer> queryPostsCount(List<String> searchWords, List<String> tags) {
         List<Object> args = new ArrayList<>();
         List<Integer> argTypes = new ArrayList<>();
         String where = buildPostsQueryWhere(searchWords, tags, args, argTypes);
@@ -128,8 +128,7 @@ public class PostRepositoryImpl implements PostRepository {
                 FROM post AS post_table
                 """ +
                 where;
-
-        return jdbcTemplate.queryForObject(query, args.toArray(), toIntArray(argTypes), Integer.class);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), toIntArray(argTypes), Integer.class));
     }
 
     private String buildPostsQueryWhere(List<String> searchWords, List<String> tags, List<Object> args, List<Integer> argTypes) {
@@ -179,7 +178,7 @@ public class PostRepositoryImpl implements PostRepository {
         return jdbcTemplate.query(query, args.toArray(), toIntArray(argTypes), postTagsRowMapper);
     }
 
-    private Post queryPost(Long postId) {
+    private Optional<Post> queryPost(Long postId) {
         List<Object> args = List.of(postId);
         List<Integer> argTypes = List.of(Types.BIGINT);
         String query = """
@@ -194,7 +193,7 @@ public class PostRepositoryImpl implements PostRepository {
                 WHERE post_table.id = ?
                 """;
 
-        return jdbcTemplate.queryForObject(query, args.toArray(), toIntArray(argTypes), postRowMapper);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), toIntArray(argTypes), postRowMapper));
     }
 
     private int[] toIntArray(List<Integer> integers) {

@@ -28,7 +28,7 @@ public class PostImageRepositoryImpl implements PostImageRepository {
     }
 
     @Override
-    public Optional<PostImage> getPostImage(Long postId) {
+    public PostImage getPostImage(Long postId) {
         try {
             Path uploadDir = Paths.get(uploadPostsDir);
             if (Files.exists(uploadDir)) {
@@ -37,14 +37,14 @@ public class PostImageRepositoryImpl implements PostImageRepository {
                     Path imagePath = uploadDir.resolve(imageName.get()).normalize();
                     if (Files.exists(imagePath)) {
                         byte[] content = Files.readAllBytes(imagePath);
-                        return Optional.of(new PostImage(content, getMediaType(content), postId));
+                        return new PostImage(content, getMediaType(content), postId);
                     }
                 }
             }
         } catch (IOException e) {
             //throw new RuntimeException(e.getMessage(), e);
         }
-        return Optional.empty();
+        return new PostImage(new byte[0], MediaType.APPLICATION_OCTET_STREAM, postId);
     }
 
     @Override

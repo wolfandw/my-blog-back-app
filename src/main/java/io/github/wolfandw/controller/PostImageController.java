@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/posts")
 public class PostImageController {
@@ -20,11 +18,8 @@ public class PostImageController {
 
     @GetMapping("/{postId}/image")
     public ResponseEntity<byte[]> getPostImage(@PathVariable("postId") Long postId) {
-        Optional<PostImage> postImage = postImageService.getPostImage(postId);
-        ResponseEntity.BodyBuilder result = ResponseEntity.ok();
-        return postImage.map(pm ->
-                result.contentType(pm.getMediaType())
-                        .body(pm.getData())).orElse(result.build());
+        PostImage postImage = postImageService.getPostImage(postId);
+        return ResponseEntity.ok().contentType(postImage.getMediaType()).body(postImage.getData());
     }
 
     @PutMapping("/{postId}/image")

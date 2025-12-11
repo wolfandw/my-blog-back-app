@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Repository
@@ -23,8 +22,8 @@ public class PostImageRepositoryTest implements PostImageRepository {
     }
 
     @Override
-    public Optional<PostImage> getPostImage(Long postId) {
-        return Optional.ofNullable(POST_IMAGE_REPOSITORY.get(postId));
+    public PostImage getPostImage(Long postId) {
+        return POST_IMAGE_REPOSITORY.getOrDefault(postId, new PostImage(new byte[0], MediaType.APPLICATION_OCTET_STREAM, postId));
     }
 
     @Override
