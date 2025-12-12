@@ -17,5 +17,5 @@ public interface PostService {
 
     void deletePost(Long postId);
 
-    int increaseLikesCount(Long postId);
+    int increasePostLikesCount(Long postId);
 }

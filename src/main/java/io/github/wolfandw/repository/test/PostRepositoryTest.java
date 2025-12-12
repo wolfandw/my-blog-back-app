@@ -23,7 +23,7 @@ public class PostRepositoryTest implements PostRepository {
                         .ifPresent(post -> {
                             post.setCommentsCount(i);
                             post.setLikesCount(i);
-                            post.setImage(i + ".png");
+                            post.setImageName(i + ".png");
                             POST_REPOSITORY.add(post);
                         }));
     }
@@ -67,20 +67,20 @@ public class PostRepositoryTest implements PostRepository {
     }
 
     @Override
-    public int increaseLikesCount(Long postId) {
+    public int increasePostLikesCount(Long postId) {
         Optional<Post> post = getPost(postId);
         post.ifPresent(p -> p.setLikesCount(p.getLikesCount() + 1));
         return post.map(Post::getLikesCount).orElse(-1);
     }
 
     @Override
-    public void increaseCommentCount(Long postId) {
+    public void increasePostCommentCount(Long postId) {
         Optional<Post> post = getPost(postId);
         post.ifPresent(p -> p.setCommentsCount(p.getCommentsCount() + 1));
     }
 
     @Override
-    public void decreaseCommentCount(Long postId) {
+    public void decreasePostCommentCount(Long postId) {
         Optional<Post> post = getPost(postId);
         post.ifPresent(p -> p.setCommentsCount(p.getCommentsCount() - 1));
     }
@@ -91,15 +91,15 @@ public class PostRepositoryTest implements PostRepository {
     }
 
     @Override
-    public void setImage(Long postId, String imageName) {
+    public void updatePostImageName(Long postId, String imageName) {
         Optional<Post> post = getPost(postId);
-        post.ifPresent(p -> p.setImage(imageName));
+        post.ifPresent(p -> p.setImageName(imageName));
     }
 
     @Override
-    public Optional<String> getImage(Long postId) {
+    public Optional<String> getPostImageName(Long postId) {
         Optional<Post> post = getPost(postId);
-        return post.map(Post::getImage);
+        return post.map(Post::getImageName);
     }
 }
 

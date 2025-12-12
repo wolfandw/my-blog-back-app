@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS post (
     text TEXT NOT NULL,
     likes_count INTEGER DEFAULT 0 NOT NULL,
     comments_count INTEGER DEFAULT 0 NOT NULL,
-    image VARCHAR(255),
+    image_name VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -17,8 +17,8 @@ CREATE INDEX idx_post_title ON post(title);
 
 CREATE TABLE IF NOT EXISTS comment (
     id BIGSERIAL PRIMARY KEY,
-    post_id BIGINT NOT NULL,
     text TEXT NOT NULL,
+    post_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
@@ -41,65 +41,65 @@ CREATE TABLE IF NOT EXISTS post_tag (
 CREATE INDEX idx_post_tag_tag_id ON post_tag(tag_id);
 CREATE INDEX idx_post_tag_post_id ON post_tag(post_id);
 
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 01 title',
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 01 title',
  'Post 01 text for 128-lenght string testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt128qq',
-  1, 1, '1.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 02 title', 'Post 02 text', 2, 2, '2.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 03 title', 'Post 03 text', 3, 3, '3.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 04 title', 'Post 04 text', 4, 1, '4.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 05 title', 'Post 05 text', 5, 2, '5.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 06 title', 'Post 06 text', 6, 3, '6.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 07 title', 'Post 07 text', 7, 1, '7.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 08 title', 'Post 08 text', 8, 2, '8.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 09 title', 'Post 09 text', 9, 3, '9.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 10 title', 'Post 10 text', 10, 1, '10.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 11 title', 'Post 11 text', 11, 2, '11.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 12 title', 'Post 12 text', 12, 3, '12.png');
-INSERT INTO post(title, text, likes_count, comments_count, image) VALUES ('Post 13 title', 'Post 13 text', 13, 1, '13.png');
+  1, 3, '1.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 02 title', 'Post 02 text', 2, 3, '2.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 03 title', 'Post 03 text', 3, 3, '3.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 04 title', 'Post 04 text', 4, 3, '4.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 05 title', 'Post 05 text', 5, 3, '5.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 06 title', 'Post 06 text', 6, 3, '6.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 07 title', 'Post 07 text', 7, 3, '7.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 08 title', 'Post 08 text', 8, 3, '8.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 09 title', 'Post 09 text', 9, 3, '9.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 10 title', 'Post 10 text', 10, 3, '10.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 11 title', 'Post 11 text', 11, 3, '11.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 12 title', 'Post 12 text', 12, 3, '12.png');
+INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 13 title', 'Post 13 text', 13, 3, '13.png');
 
-INSERT INTO comment(post_id, text) VALUES (1, 'Post 1 comment 1');
-INSERT INTO comment(post_id, text) VALUES (1, 'Post 1 comment 2');
-INSERT INTO comment(post_id, text) VALUES (1, 'Post 1 comment 3');
-INSERT INTO comment(post_id, text) VALUES (2, 'Post 2 comment 1');
-INSERT INTO comment(post_id, text) VALUES (2, 'Post 2 comment 2');
-INSERT INTO comment(post_id, text) VALUES (2, 'Post 2 comment 3');
-INSERT INTO comment(post_id, text) VALUES (3, 'Post 3 comment 1');
-INSERT INTO comment(post_id, text) VALUES (3, 'Post 3 comment 2');
-INSERT INTO comment(post_id, text) VALUES (3, 'Post 3 comment 3');
-INSERT INTO comment(post_id, text) VALUES (4, 'Post 4 comment 1');
-INSERT INTO comment(post_id, text) VALUES (4, 'Post 4 comment 2');
-INSERT INTO comment(post_id, text) VALUES (4, 'Post 4 comment 3');
-INSERT INTO comment(post_id, text) VALUES (5, 'Post 5 comment 1');
-INSERT INTO comment(post_id, text) VALUES (5, 'Post 5 comment 2');
-INSERT INTO comment(post_id, text) VALUES (5, 'Post 5 comment 3');
-INSERT INTO comment(post_id, text) VALUES (6, 'Post 6 comment 1');
-INSERT INTO comment(post_id, text) VALUES (6, 'Post 6 comment 2');
-INSERT INTO comment(post_id, text) VALUES (6, 'Post 6 comment 3');
-INSERT INTO comment(post_id, text) VALUES (7, 'Post 7 comment 1');
-INSERT INTO comment(post_id, text) VALUES (7, 'Post 7 comment 2');
-INSERT INTO comment(post_id, text) VALUES (7, 'Post 7 comment 3');
-INSERT INTO comment(post_id, text) VALUES (8, 'Post 8 comment 1');
-INSERT INTO comment(post_id, text) VALUES (8, 'Post 8 comment 2');
-INSERT INTO comment(post_id, text) VALUES (8, 'Post 8 comment 3');
-INSERT INTO comment(post_id, text) VALUES (9, 'Post 9 comment 1');
-INSERT INTO comment(post_id, text) VALUES (9, 'Post 9 comment 2');
-INSERT INTO comment(post_id, text) VALUES (9, 'Post 9 comment 3');
-INSERT INTO comment(post_id, text) VALUES (10, 'Post 10 comment 1');
-INSERT INTO comment(post_id, text) VALUES (10, 'Post 10 comment 2');
-INSERT INTO comment(post_id, text) VALUES (10, 'Post 10 comment 3');
-INSERT INTO comment(post_id, text) VALUES (11, 'Post 11 comment 1');
-INSERT INTO comment(post_id, text) VALUES (11, 'Post 11 comment 2');
-INSERT INTO comment(post_id, text) VALUES (11, 'Post 11 comment 3');
-INSERT INTO comment(post_id, text) VALUES (12, 'Post 12 comment 1');
-INSERT INTO comment(post_id, text) VALUES (12, 'Post 12 comment 2');
-INSERT INTO comment(post_id, text) VALUES (12, 'Post 12 comment 3');
-INSERT INTO comment(post_id, text) VALUES (13, 'Post 13 comment 1');
-INSERT INTO comment(post_id, text) VALUES (13, 'Post 13 comment 2');
-INSERT INTO comment(post_id, text) VALUES (13, 'Post 13 comment 3');
+INSERT INTO comment(text, post_id ) VALUES ('Post 1 comment 1', 1);
+INSERT INTO comment(text, post_id ) VALUES ('Post 1 comment 2', 1);
+INSERT INTO comment(text, post_id ) VALUES ('Post 1 comment 3', 1);
+INSERT INTO comment(text, post_id ) VALUES ('Post 2 comment 1', 2);
+INSERT INTO comment(text, post_id ) VALUES ('Post 2 comment 2', 2);
+INSERT INTO comment(text, post_id ) VALUES ('Post 2 comment 3', 2);
+INSERT INTO comment(text, post_id ) VALUES ('Post 3 comment 1', 3);
+INSERT INTO comment(text, post_id ) VALUES ('Post 3 comment 2', 3);
+INSERT INTO comment(text, post_id ) VALUES ('Post 3 comment 3', 3);
+INSERT INTO comment(text, post_id ) VALUES ('Post 4 comment 1', 4);
+INSERT INTO comment(text, post_id ) VALUES ('Post 4 comment 2', 4);
+INSERT INTO comment(text, post_id ) VALUES ('Post 4 comment 3', 4);
+INSERT INTO comment(text, post_id ) VALUES ('Post 5 comment 1', 5);
+INSERT INTO comment(text, post_id ) VALUES ('Post 5 comment 2', 5);
+INSERT INTO comment(text, post_id ) VALUES ('Post 5 comment 3', 5);
+INSERT INTO comment(text, post_id ) VALUES ('Post 6 comment 1', 6);
+INSERT INTO comment(text, post_id ) VALUES ('Post 6 comment 2', 6);
+INSERT INTO comment(text, post_id ) VALUES ('Post 6 comment 3', 6);
+INSERT INTO comment(text, post_id ) VALUES ('Post 7 comment 1', 7);
+INSERT INTO comment(text, post_id ) VALUES ('Post 7 comment 2', 7);
+INSERT INTO comment(text, post_id ) VALUES ('Post 7 comment 3', 7);
+INSERT INTO comment(text, post_id ) VALUES ('Post 8 comment 1', 8);
+INSERT INTO comment(text, post_id ) VALUES ('Post 8 comment 2', 8);
+INSERT INTO comment(text, post_id ) VALUES ('Post 8 comment 3', 8);
+INSERT INTO comment(text, post_id ) VALUES ('Post 9 comment 1', 9);
+INSERT INTO comment(text, post_id ) VALUES ('Post 9 comment 2', 9);
+INSERT INTO comment(text, post_id ) VALUES ('Post 9 comment 3', 9);
+INSERT INTO comment(text, post_id ) VALUES ('Post 10 comment 1', 10);
+INSERT INTO comment(text, post_id ) VALUES ('Post 10 comment 2', 10);
+INSERT INTO comment(text, post_id ) VALUES ('Post 10 comment 3', 10);
+INSERT INTO comment(text, post_id ) VALUES ('Post 11 comment 1', 11);
+INSERT INTO comment(text, post_id ) VALUES ('Post 11 comment 2', 11);
+INSERT INTO comment(text, post_id ) VALUES ('Post 11 comment 3', 11);
+INSERT INTO comment(text, post_id ) VALUES ('Post 12 comment 1', 12);
+INSERT INTO comment(text, post_id ) VALUES ('Post 12 comment 2', 12);
+INSERT INTO comment(text, post_id ) VALUES ('Post 12 comment 3', 12);
+INSERT INTO comment(text, post_id ) VALUES ('Post 13 comment 1', 13);
+INSERT INTO comment(text, post_id ) VALUES ('Post 13 comment 2', 13);
+INSERT INTO comment(text, post_id ) VALUES ('Post 13 comment 3', 13);
 
-INSERT INTO tag(name) VALUES ('Tag 1');
-INSERT INTO tag(name) VALUES ('Tag 2');
-INSERT INTO tag(name) VALUES ('Tag 3');
+INSERT INTO tag(name) VALUES ('Tag1');
+INSERT INTO tag(name) VALUES ('Tag2');
+INSERT INTO tag(name) VALUES ('Tag3');
 
 INSERT INTO post_tag(post_id, tag_id) VALUES (1, 1);
 INSERT INTO post_tag(post_id, tag_id) VALUES (2, 2);

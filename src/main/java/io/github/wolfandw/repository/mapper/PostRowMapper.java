@@ -19,6 +19,6 @@ public class PostRowMapper implements RowMapper<Post> {
                 new ArrayList<>(),
                 rs.getInt("likes_count"),
                 rs.getInt("comments_count"),
-                rs.getString("image"));
+                rs.getString("image_name"));
     }
 }

@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostCommentRepository {
-    List<PostComment> getComments(Long postId);
+    List<PostComment> getPostComments(Long postId);
 
-    Optional<PostComment> getComment(Long postId, Long commentId);
+    Optional<PostComment> getPostComment(Long postId, Long commentId);
 
-    Optional<PostComment> createComment(Long postId, String text);
+    Optional<PostComment> createPostComment(Long postId, String text);
 
-    Optional<PostComment> updateComment(Long postId, Long commentId, String text);
+    Optional<PostComment> updatePostComment(Long postId, Long commentId, String text);
 
-    void deleteComment(Long postId, Long commentId);
+    void deletePostComment(Long postId, Long commentId);
 
-    void deleteComments(Long postId);
+    void deletePostComments(Long postId);
 }

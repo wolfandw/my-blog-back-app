@@ -17,7 +17,6 @@ import javax.sql.DataSource;
 public class DataSourceConfiguration {
     @Bean
     public DataSource dataSource(
-            // Настройки соединения возьмём из Environment
             @Value("${spring.datasource.url}") String url,
             @Value("${spring.datasource.username}") String username,
             @Value("${spring.datasource.password}") String password
@@ -42,7 +41,7 @@ public class DataSourceConfiguration {
         DataSource dataSource = event.getApplicationContext().getBean(DataSource.class);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("schema.sql")); // Файл должен находиться в ресурсах
+        populator.addScript(new ClassPathResource("schema.sql"));
         populator.execute(dataSource);
     }
 }

@@ -3,64 +3,145 @@ package io.github.wolfandw.repository.impl;
 import io.github.wolfandw.model.PostComment;
 import io.github.wolfandw.repository.PostCommentRepository;
 import io.github.wolfandw.repository.PostRepository;
+import io.github.wolfandw.repository.mapper.PostCommentRowMapper;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.stream.IntStream;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
+@Primary
 @Repository
 public class PostCommentRepositoryImpl implements PostCommentRepository {
-    public static final Map<Long, List<PostComment>> POST_COMMENT_REPOSITORY = new HashMap<>();
-    private static Long maxId = 1L;
-
+    private final JdbcTemplate jdbcTemplate;
     private final PostRepository postRepository;
+    private final PostCommentRowMapper postCommentRowMapper;
 
-    public PostCommentRepositoryImpl(PostRepository postRepository) {
+    public PostCommentRepositoryImpl(JdbcTemplate jdbcTemplate, PostRepository postRepository, PostCommentRowMapper postCommentRowMapper) {
+        this.jdbcTemplate = jdbcTemplate;
         this.postRepository = postRepository;
-
-        IntStream.range(1, 4).forEach(i -> {
-            Long postId = (long) i;
-            List<PostComment> postComments = POST_COMMENT_REPOSITORY.computeIfAbsent(postId, v -> new ArrayList<>());
-            IntStream.range(0, i).forEach(j ->
-                    createComment(postId, "Post " + postId + ", comment " + (maxId + 1)).ifPresent(postComments::add));
-        });
+        this.postCommentRowMapper = postCommentRowMapper;
     }
 
     @Override
-    public List<PostComment> getComments(Long postId) {
-        return POST_COMMENT_REPOSITORY.computeIfAbsent(postId, v -> new ArrayList<>());
+    public List<PostComment> getPostComments(Long postId) {
+        return executeQueryGetPostComments(postId);
     }
 
     @Override
-    public Optional<PostComment> getComment(Long postId, Long commentId) {
-        List<PostComment> postComments = POST_COMMENT_REPOSITORY.computeIfAbsent(postId, v -> new ArrayList<>());
-        return postComments.stream().filter(comment -> comment.getId().equals(commentId)).findAny();
+    public Optional<PostComment> getPostComment(Long postId, Long commentId) {
+        return executeQueryGetPostComment(postId, commentId);
     }
 
     @Override
-    public Optional<PostComment> createComment(Long postId, String text) {
-        PostComment postComment = new PostComment(maxId++,
-                text,
-                postId);
-        return Optional.of(postComment);
+    public Optional<PostComment> createPostComment(Long postId, String text) {
+        Optional<Long> newCommentId = executeQueryInsertComment(postId, text);
+        Optional<PostComment> comment = newCommentId.flatMap(commentId -> executeQueryGetPostComment(postId, commentId));
+        comment.ifPresent(c -> postRepository.increasePostCommentCount(postId));
+        return comment;
+    }
+
+
+    @Override
+    public Optional<PostComment> updatePostComment(Long postId, Long commentId, String text) {
+        executeQueryUpdatePostComment(postId, commentId, text);
+        return getPostComment(postId, commentId);
     }
 
     @Override
-    public Optional<PostComment> updateComment(Long postId, Long commentId, String text) {
-        Optional<PostComment> postComment = getComment(postId, commentId);
-        postComment.ifPresent(comment -> comment.setText(text));
-        return postComment;
+    public void deletePostComment(Long postId, Long commentId) {
+        executeQueryDeletePostComments(postId, commentId);
+        postRepository.decreasePostCommentCount(postId);
     }
 
     @Override
-    public void deleteComment(Long postId, Long commentId) {
-        List<PostComment> postComment = POST_COMMENT_REPOSITORY.computeIfAbsent(postId, v -> new ArrayList<>());
-        postComment.removeIf(comment -> comment.getId().equals(commentId));
-        postRepository.decreaseCommentCount(postId);
+    public void deletePostComments(Long postId) {
+        executeQueryDeletePostComments(postId);
     }
 
-    @Override
-    public void deleteComments(Long postId) {
-        POST_COMMENT_REPOSITORY.remove(postId);
+    private List<PostComment> executeQueryGetPostComments(Long postId) {
+        List<Object> args = List.of(postId);
+        List<Integer> argTypes = List.of(Types.BIGINT);
+        String query = """
+                SELECT
+                    id,
+                    text,
+                    post_id
+                FROM comment AS comment_table
+                WHERE comment_table.post_id = ?
+                ORDER BY comment_table.created_at ASC
+                """;
+
+        return jdbcTemplate.query(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postCommentRowMapper);
+    }
+
+    private Optional<PostComment> executeQueryGetPostComment(Long postId, Long commentId) {
+        List<Object> args = List.of(postId, commentId);
+        List<Integer> argTypes = List.of(Types.BIGINT, Types.BIGINT);
+        String query = """
+                SELECT
+                    id,
+                    text,
+                    post_id
+                FROM comment AS comment_table
+                WHERE comment_table.post_id = ? AND comment_table.id = ?
+                ORDER BY comment_table.created_at DESC
+                """;
+
+        return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postCommentRowMapper));
+    }
+
+    private Optional<Long> executeQueryInsertComment(Long postId, String text) {
+        String query = """
+                INSERT INTO comment (
+                    text,
+                    post_id)
+                VALUES (?, ?)
+                """;
+
+        KeyHolder keyHolder = new GeneratedIdKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement pst = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pst.setString(1, text);
+            pst.setLong(2, postId);
+            return pst;
+        }, keyHolder);
+
+        return Optional.ofNullable(keyHolder.getKey()).map(Number::longValue);
+    }
+
+    private void executeQueryUpdatePostComment(Long postId, Long commentId, String text) {
+        String query = """
+                UPDATE comment
+                SET
+                    text = ?
+                    updated_at = ?
+                WHERE post_id = ? AND id = ?
+                """;
+
+        jdbcTemplate.update(query, text, Timestamp.valueOf(LocalDateTime.now()), postId, commentId);
+    }
+
+    private void executeQueryDeletePostComments(Long postId, Long commentId) {
+        String query = """
+                DELETE FROM comment
+                WHERE post_id = ? AND id = ?
+                """;
+        jdbcTemplate.update(query, commentId, postId);
+    }
+
+    private void executeQueryDeletePostComments(Long postId) {
+        String query = """
+                DELETE FROM comment
+                WHERE post_id = ?
+                """;
+        jdbcTemplate.update(query, postId);
     }
 }

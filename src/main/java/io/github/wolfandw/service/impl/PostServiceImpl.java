@@ -59,13 +59,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long postId) {
-        postCommentRepository.deleteComments(postId);
+        postCommentRepository.deletePostComments(postId);
         postImageRepository.deletePostImage(postId);
         postRepository.deletePost(postId);
     }
 
     @Override
-    public int increaseLikesCount(Long postId) {
-        return postRepository.increaseLikesCount(postId);
+    public int increasePostLikesCount(Long postId) {
+        return postRepository.increasePostLikesCount(postId);
     }
 }

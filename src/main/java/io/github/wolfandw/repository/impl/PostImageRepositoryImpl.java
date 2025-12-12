@@ -32,7 +32,7 @@ public class PostImageRepositoryImpl implements PostImageRepository {
         try {
             Path uploadDir = Paths.get(uploadPostsDir);
             if (Files.exists(uploadDir)) {
-                Optional<String> imageName = postRepository.getImage(postId);
+                Optional<String> imageName = postRepository.getPostImageName(postId);
                 if (imageName.isPresent()) {
                     Path imagePath = uploadDir.resolve(imageName.get()).normalize();
                     if (Files.exists(imagePath)) {
@@ -42,9 +42,9 @@ public class PostImageRepositoryImpl implements PostImageRepository {
                 }
             }
         } catch (IOException e) {
-            //throw new RuntimeException(e.getMessage(), e);
+            // Do nothing
         }
-        return new PostImage(new byte[0], MediaType.APPLICATION_OCTET_STREAM, postId);
+        return new PostImage(new byte[0], MediaType.IMAGE_JPEG, postId);
     }
 
     @Override
@@ -59,9 +59,9 @@ public class PostImageRepositoryImpl implements PostImageRepository {
             String imageName = postId.toString() + "." + extension;
             Path imagePath = uploadDir.resolve(imageName);
             image.transferTo(imagePath);
-            postRepository.setImage(postId, imageName);
+            postRepository.updatePostImageName(postId, imageName);
         } catch (IOException e) {
-            //throw new RuntimeException(e.getMessage(), e);
+            // Do nothing
         }
     }
 
@@ -70,7 +70,7 @@ public class PostImageRepositoryImpl implements PostImageRepository {
         try {
             Path uploadDir = Paths.get(uploadPostsDir);
             if (Files.exists(uploadDir)) {
-                Optional<String> imageName = postRepository.getImage(postId);
+                Optional<String> imageName = postRepository.getPostImageName(postId);
                 if (imageName.isPresent()) {
                     Path imagePath = uploadDir.resolve(imageName.get()).normalize();
                     if (Files.exists(imagePath)) {
@@ -79,7 +79,7 @@ public class PostImageRepositoryImpl implements PostImageRepository {
                 }
             }
         } catch (IOException e) {
-            //throw new RuntimeException(e.getMessage(), e);
+            // Do nothing
         }
     }
 

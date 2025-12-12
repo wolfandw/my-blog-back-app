@@ -65,7 +65,7 @@ public class PostController {
     }
 
     @PostMapping("/{id}/likes")
-    public Integer increaseLikesCount(@PathVariable("id") Long id) {
-        return postService.increaseLikesCount(id);
+    public Integer increasePostLikesCount(@PathVariable("id") Long id) {
+        return postService.increasePostLikesCount(id);
     }
 }

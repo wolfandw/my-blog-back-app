@@ -16,16 +16,16 @@ public interface PostRepository {
 
     void deletePost(Long postId);
 
-    int increaseLikesCount(Long postId);
+    int increasePostLikesCount(Long postId);
 
-    void increaseCommentCount(Long postId);
+    void increasePostCommentCount(Long postId);
 
-    void decreaseCommentCount(Long postId);
+    void decreasePostCommentCount(Long postId);
 
     int getPostsCount(List<String> searchWords, List<String> tags);
 
-    void setImage(Long postId, String imageName);
+    void updatePostImageName(Long postId, String imageName);
 
-    Optional<String> getImage(Long postId);
+    Optional<String> getPostImageName(Long postId);
 }
 

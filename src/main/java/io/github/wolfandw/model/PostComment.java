@@ -2,8 +2,8 @@ package io.github.wolfandw.model;
 
 public class PostComment {
     private final Long id;
-    private final Long postId;
     private String text;
+    private final Long postId;
 
     public PostComment(Long id, String text, Long postId) {
         this.id = id;

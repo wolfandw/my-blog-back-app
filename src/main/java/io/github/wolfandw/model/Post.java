@@ -10,7 +10,7 @@ public class Post {
     private List<String> tags = new ArrayList<>();
     private int likesCount;
     private int commentsCount;
-    private String image;
+    private String imageName;
 
     public Post(Long id,
                 String title,
@@ -18,14 +18,14 @@ public class Post {
                 List<String> tags,
                 int likesCount,
                 int commentsCount,
-                String image) {
+                String imageName) {
         this.id = id;
         this.title = title;
         this.text = text;
         this.tags = tags;
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
-        this.image = image;
+        this.imageName = imageName;
     }
 
     public Long getId() {
@@ -72,11 +72,11 @@ public class Post {
         this.commentsCount = commentsCount;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

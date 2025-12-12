@@ -20,32 +20,30 @@ public class PostCommentServiceImpl implements PostCommentService {
     }
 
     @Override
-    public List<PostComment> getComments(Long postId) {
-        return postCommentRepository.getComments(postId);
+    public List<PostComment> getPostComments(Long postId) {
+        return postCommentRepository.getPostComments(postId);
     }
 
     @Override
-    public Optional<PostComment> getComment(Long postId, Long commentId) {
-        return postCommentRepository.getComment(postId, commentId);
+    public Optional<PostComment> getPostComment(Long postId, Long commentId) {
+        return postCommentRepository.getPostComment(postId, commentId);
     }
 
     @Override
-    public Optional<PostComment> createComment(Long postId, String text) {
-        Optional<PostComment> comment = postCommentRepository.createComment(postId, text);
-        if (comment.isPresent()) {
-            postRepository.increaseCommentCount(postId);
-        }
+    public Optional<PostComment> createPostComment(Long postId, String text) {
+        Optional<PostComment> comment = postCommentRepository.createPostComment(postId, text);
+        comment.ifPresent(c -> postRepository.increasePostCommentCount(postId));
         return comment;
     }
 
     @Override
-    public Optional<PostComment> updateComment(Long postId, Long commentId, String text) {
-        return postCommentRepository.updateComment(postId, commentId, text);
+    public Optional<PostComment> updatePostComment(Long postId, Long commentId, String text) {
+        return postCommentRepository.updatePostComment(postId, commentId, text);
     }
 
     @Override
-    public void deleteComment(Long postId, Long commentId) {
-        postCommentRepository.deleteComment(postId, commentId);
-        postRepository.decreaseCommentCount(postId);
+    public void deletePostComment(Long postId, Long commentId) {
+        postRepository.decreasePostCommentCount(postId);
+        postCommentRepository.deletePostComment(postId, commentId);
     }
 }
