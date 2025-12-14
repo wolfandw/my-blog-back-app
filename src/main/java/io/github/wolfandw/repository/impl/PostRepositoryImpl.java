@@ -5,7 +5,6 @@ import io.github.wolfandw.model.PostTag;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.repository.mapper.PostRowMapper;
 import io.github.wolfandw.repository.mapper.PostTagsRowMapper;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -21,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Primary
 @Repository
 public class PostRepositoryImpl implements PostRepository {
     private final JdbcTemplate jdbcTemplate;

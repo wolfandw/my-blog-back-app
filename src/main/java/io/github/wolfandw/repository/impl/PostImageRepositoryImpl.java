@@ -4,7 +4,6 @@ import io.github.wolfandw.model.PostImage;
 import io.github.wolfandw.repository.PostImageRepository;
 import io.github.wolfandw.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-@Primary
 @Repository
 public class PostImageRepositoryImpl implements PostImageRepository {
     private static final String JPG = "jpg";

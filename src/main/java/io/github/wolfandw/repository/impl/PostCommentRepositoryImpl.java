@@ -4,7 +4,6 @@ import io.github.wolfandw.model.PostComment;
 import io.github.wolfandw.repository.PostCommentRepository;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.repository.mapper.PostCommentRowMapper;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Primary
 @Repository
 public class PostCommentRepositoryImpl implements PostCommentRepository {
     private final JdbcTemplate jdbcTemplate;
