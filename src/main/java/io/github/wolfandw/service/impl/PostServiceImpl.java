@@ -18,7 +18,9 @@ public class PostServiceImpl implements PostService {
     private final PostImageRepository postImageRepository;
     private final PostCommentRepository postCommentRepository;
 
-    public PostServiceImpl(PostRepository postRepository, PostImageRepository postImageRepository, PostCommentRepository postCommentRepository) {
+    public PostServiceImpl(PostRepository postRepository,
+                           PostImageRepository postImageRepository,
+                           PostCommentRepository postCommentRepository) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
         this.postCommentRepository = postCommentRepository;
@@ -28,18 +30,28 @@ public class PostServiceImpl implements PostService {
     public PostsPage getPostsPage(String search, int pageNumber, int pageSize) {
         List<String> searchWords = new ArrayList<>();
         List<String> tags = new ArrayList<>();
-        for (String word : search.split("\\s+")) {
-            if (word.startsWith("#")) {
-                tags.add(word.substring(1));
-            } else if (!word.isEmpty()) {
-                searchWords.add(word);
+
+        if (search != null) {
+            for (String word : search.split("\\s+")) {
+                if (word.startsWith("#")) {
+                    tags.add(word.substring(1));
+                } else if (!word.isEmpty()) {
+                    searchWords.add(word);
+                }
             }
         }
+
+        pageSize = Math.max(pageSize, 1);
+        pageNumber = Math.max(pageNumber, 1);
 
         List<Post> posts = postRepository.getPosts(searchWords, tags, pageNumber, pageSize);
         int postsCount = postRepository.getPostsCount(searchWords, tags);
 
-        return new PostsPage(posts, postsCount);
+        int lastPage = (int) Math.ceil((double) postsCount / pageSize);
+        boolean hasPrev = pageNumber > 1;
+        boolean hasNext = pageNumber < lastPage;
+
+        return new PostsPage(posts, hasPrev, hasNext, lastPage);
     }
 
     @Override

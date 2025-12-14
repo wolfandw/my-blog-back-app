@@ -14,7 +14,6 @@ public class PostToDtoMapperImpl implements PostToDtoMapper {
         if (text.length() >= MAX_TEXT_LENGTH) {
             text = text.substring(0, MAX_TEXT_LENGTH) + "...";
         }
-        text += System.lineSeparator() + post.getImageName();
         return new PostResponseDto(post.getId(),
                 post.getTitle(),
                 text,
