@@ -3,6 +3,7 @@ package io.github.wolfandw.test.service;
 import io.github.wolfandw.model.PostImage;
 import io.github.wolfandw.repository.PostImageRepository;
 import io.github.wolfandw.service.PostImageService;
+import io.github.wolfandw.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -17,7 +18,7 @@ import java.util.stream.LongStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class PostImageServiceTest extends AbstractPostServiceTest {
+public class PostImageServiceTest extends AbstractPostTest {
     @Autowired
     private PostImageService postImageService;
 

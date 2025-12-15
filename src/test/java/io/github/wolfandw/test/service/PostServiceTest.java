@@ -6,6 +6,7 @@ import io.github.wolfandw.repository.PostCommentRepository;
 import io.github.wolfandw.repository.PostImageRepository;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.service.PostService;
+import io.github.wolfandw.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
-public class PostServiceTest extends AbstractPostServiceTest {
+public class PostServiceTest extends AbstractPostTest {
     @Autowired
     @Qualifier("postServiceTest")
     private PostService postService;
@@ -60,7 +61,9 @@ public class PostServiceTest extends AbstractPostServiceTest {
         boolean hasPrev = true; // pageNumber > 1;
         boolean hasNext = true; // pageNumber < lastPage;
 
-        List<Post> mockPosts = posts.values().stream().filter(p -> p.getId() > ((pageNumber - 1) * pageSize) && p.getId() < (pageNumber * pageSize + 1)).toList();
+        List<Post> mockPosts = posts.values().stream()
+                .filter(p -> p.getId() > ((pageNumber - 1) * pageSize) && p.getId() < (pageNumber * pageSize + 1))
+                .toList();
         when(postRepository.getPosts(List.of(), List.of(), pageNumber, pageSize))
                 .thenReturn(mockPosts);
         int postsCount = posts.size(); // 15
@@ -79,7 +82,9 @@ public class PostServiceTest extends AbstractPostServiceTest {
         int pageNumber = 2;
         int pageSize = 5;
 
-        List<Post> mockPosts = posts.values().stream().filter(p -> p.getId() > ((pageNumber - 1) * pageSize) && p.getId() < (pageNumber * pageSize + 1)).toList();
+        List<Post> mockPosts = posts.values().stream()
+                .filter(p -> p.getId() > ((pageNumber - 1) * pageSize) && p.getId() < (pageNumber * pageSize + 1))
+                .toList();
         when(postRepository.getPosts(List.of(), List.of(), pageNumber, pageSize))
                 .thenReturn(mockPosts);
         int postsCount = posts.size(); // 15
@@ -142,7 +147,13 @@ public class PostServiceTest extends AbstractPostServiceTest {
         String text = "Test Post " + postId + "  text updated";
         List<String> tags = List.of("tag_3", "tag_4", "tag_5");
         Post postBeforeUpdate = posts.get(postId);
-        Post mockPost = new Post(postId, title, text, tags, postBeforeUpdate.getLikesCount(), postBeforeUpdate.getCommentsCount(), postBeforeUpdate.getImageName());
+        Post mockPost = new Post(postId,
+                title,
+                text,
+                tags,
+                postBeforeUpdate.getLikesCount(),
+                postBeforeUpdate.getCommentsCount(),
+                postBeforeUpdate.getImageName());
         when(postRepository.updatePost(postId, title, text, tags)).thenReturn(Optional.of(mockPost));
         Optional<Post> post = postService.updatePost(postId, title, text, tags);
 

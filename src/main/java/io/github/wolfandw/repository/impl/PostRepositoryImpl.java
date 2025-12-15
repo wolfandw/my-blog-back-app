@@ -27,7 +27,8 @@ public class PostRepositoryImpl implements PostRepository {
     private final PostRowMapper postRowMapper;
     private final PostTagsRowMapper postTagsRowMapper;
 
-    public PostRepositoryImpl(JdbcTemplate jdbcTemplate, PostRowMapper postRowMapper, PostTagsRowMapper postTagsRowMapper) {
+    public PostRepositoryImpl(JdbcTemplate jdbcTemplate, PostRowMapper postRowMapper,
+                              PostTagsRowMapper postTagsRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.postRowMapper = postRowMapper;
         this.postTagsRowMapper = postTagsRowMapper;
@@ -38,7 +39,8 @@ public class PostRepositoryImpl implements PostRepository {
         List<Post> posts = executeQueryGetPosts(searchWords, tags, pageNumber, pageSize);
         Long[] postIds = posts.stream().map(Post::getId).toArray(Long[]::new);
         List<PostTag> postTags = executeQueryGetPostsTags(postIds);
-        Map<Long, List<String>> postTagsMap = postTags.stream().collect(Collectors.groupingBy(PostTag::getPostId, Collectors.mapping(PostTag::getName, Collectors.toList())));
+        Map<Long, List<String>> postTagsMap = postTags.stream().collect(Collectors.groupingBy(PostTag::getPostId,
+                Collectors.mapping(PostTag::getName, Collectors.toList())));
         posts.forEach(p -> p.setTags(postTagsMap.getOrDefault(p.getId(), List.of())));
         return posts;
     }
@@ -113,8 +115,8 @@ public class PostRepositoryImpl implements PostRepository {
         Optional<Post> post = executeQueryGetPost(postId);
         post.ifPresent(p -> {
             int commentCount = p.getCommentsCount();
-            commentCount++;
-            executeQueryUpdatePostCommentsCount(postId, commentCount);
+            commentCount--;
+            executeQueryUpdatePostCommentsCount(postId, Math.max(commentCount, 0));
         });
     }
 
@@ -143,10 +145,10 @@ public class PostRepositoryImpl implements PostRepository {
                 FROM post AS post_table
                 """ + where + " ORDER BY post_table.created_at DESC LIMIT ? OFFSET ?";
 
-        args.add(pageSize);
+        args.add(Math.max(pageSize, 0));
         argTypes.add(Types.INTEGER);
 
-        args.add((pageNumber - 1) * pageSize);
+        args.add(Math.max((pageNumber - 1) * pageSize, 0));
         argTypes.add(Types.INTEGER);
 
         return jdbcTemplate.query(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postRowMapper);
@@ -162,13 +164,19 @@ public class PostRepositoryImpl implements PostRepository {
                 FROM post AS post_table
                 """ + where;
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), Integer.class));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(query,
+                    args.toArray(),
+                    RepositoryUtil.toIntArray(argTypes),
+                    Integer.class));
         } catch (DataAccessException e) {
             return Optional.empty();
         }
     }
 
-    private String buildGetPostsWhere(List<String> searchWords, List<String> tags, List<Object> args, List<Integer> argTypes) {
+    private String buildGetPostsWhere(List<String> searchWords,
+                                      List<String> tags,
+                                      List<Object> args,
+                                      List<Integer> argTypes) {
         if (searchWords.isEmpty() && tags.isEmpty()) {
             return "";
         }
@@ -232,7 +240,10 @@ public class PostRepositoryImpl implements PostRepository {
                 """;
 
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postRowMapper));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(query,
+                    args.toArray(),
+                    RepositoryUtil.toIntArray(argTypes),
+                    postRowMapper));
         } catch (DataAccessException e) {
             return Optional.empty();
         }

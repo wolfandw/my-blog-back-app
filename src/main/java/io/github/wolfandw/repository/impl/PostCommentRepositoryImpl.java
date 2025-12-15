@@ -4,6 +4,7 @@ import io.github.wolfandw.model.PostComment;
 import io.github.wolfandw.repository.PostCommentRepository;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.repository.mapper.PostCommentRowMapper;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,9 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
     private final PostRepository postRepository;
     private final PostCommentRowMapper postCommentRowMapper;
 
-    public PostCommentRepositoryImpl(JdbcTemplate jdbcTemplate, PostRepository postRepository, PostCommentRowMapper postCommentRowMapper) {
+    public PostCommentRepositoryImpl(JdbcTemplate jdbcTemplate,
+                                     PostRepository postRepository,
+                                     PostCommentRowMapper postCommentRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.postRepository = postRepository;
         this.postCommentRowMapper = postCommentRowMapper;
@@ -41,7 +44,8 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
     @Override
     public Optional<PostComment> createPostComment(Long postId, String text) {
         Optional<Long> newCommentId = executeQueryInsertComment(postId, text);
-        Optional<PostComment> comment = newCommentId.flatMap(commentId -> executeQueryGetPostComment(postId, commentId));
+        Optional<PostComment> comment = newCommentId
+                .flatMap(commentId -> executeQueryGetPostComment(postId, commentId));
         comment.ifPresent(c -> postRepository.increasePostCommentCount(postId));
         return comment;
     }
@@ -93,7 +97,14 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
                 ORDER BY comment_table.created_at DESC
                 """;
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postCommentRowMapper));
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(query,
+                    args.toArray(),
+                    RepositoryUtil.toIntArray(argTypes),
+                    postCommentRowMapper));
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     private Optional<Long> executeQueryInsertComment(Long postId, String text) {
@@ -132,7 +143,7 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
                 DELETE FROM comment
                 WHERE post_id = ? AND id = ?
                 """;
-        jdbcTemplate.update(query, commentId, postId);
+        jdbcTemplate.update(query, postId, commentId);
     }
 
     private void executeQueryDeletePostComments(Long postId) {

@@ -11,5 +11,5 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         "io.github.wolfandw.repository",
         "io.github.wolfandw.service"
 })
-public class WebConfigurationTest {
+public class WebConfigurationIntegrationTest {
 }

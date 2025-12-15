@@ -20,7 +20,8 @@ public class PostImageRepositoryImpl implements PostImageRepository {
     private final String uploadPostsDir;
     private final PostRepository postRepository;
 
-    public PostImageRepositoryImpl(@Value("${my.blog.back.app.upload.posts.dir}") String uploadPostsDir, PostRepository postRepository) {
+    public PostImageRepositoryImpl(@Value("${my.blog.back.app.upload.posts.dir}") String uploadPostsDir,
+                                   PostRepository postRepository) {
         this.uploadPostsDir = uploadPostsDir;
         this.postRepository = postRepository;
     }
@@ -47,20 +48,22 @@ public class PostImageRepositoryImpl implements PostImageRepository {
 
     @Override
     public void updatePostImage(Long postId, MultipartFile image) {
-        try {
-            Path uploadDir = Paths.get(uploadPostsDir);
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
+        postRepository.getPost(postId).ifPresent(post -> {
+            try {
+                Path uploadDir = Paths.get(uploadPostsDir);
+                if (!Files.exists(uploadDir)) {
+                    Files.createDirectories(uploadDir);
+                }
+                String originName = image.getOriginalFilename();
+                String extension = getImageExtension(originName);
+                String imageName = post.getId().toString() + "." + extension;
+                Path imagePath = uploadDir.resolve(imageName);
+                image.transferTo(imagePath);
+                postRepository.updatePostImageName(post.getId(), imageName);
+            } catch (IOException e) {
+                // Do nothing
             }
-            String originName = image.getOriginalFilename();
-            String extension = getImageExtension(originName);
-            String imageName = postId.toString() + "." + extension;
-            Path imagePath = uploadDir.resolve(imageName);
-            image.transferTo(imagePath);
-            postRepository.updatePostImageName(postId, imageName);
-        } catch (IOException e) {
-            // Do nothing
-        }
+        });
     }
 
     @Override

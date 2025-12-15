@@ -8,7 +8,7 @@ ALTER TABLE post ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE tag ALTER COLUMN id RESTART WITH 1;
 
 INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 01 title',
- 'Post 01 text for 128-lenght string testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt128qq',
+ 'Post 01 text for 128-length string testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt128qq',
   1, 3, '1.png');
 INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 02 title', 'Post 02 text', 2, 3, '2.png');
 INSERT INTO post(title, text, likes_count, comments_count, image_name) VALUES ('Post 03 title', 'Post 03 text', 3, 3, '3.png');

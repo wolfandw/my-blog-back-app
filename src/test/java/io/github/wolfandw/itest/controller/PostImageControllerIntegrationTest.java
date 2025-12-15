@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class PostImageControllerTest extends AbstractPostIntegrationTest {
+public class PostImageControllerIntegrationTest extends AbstractPostIntegrationTest {
     @Test
     void getPostsPageTest() throws Exception {
         mockMvc.perform(get("/api/posts/1/image"))

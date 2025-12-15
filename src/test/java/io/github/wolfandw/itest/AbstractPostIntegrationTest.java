@@ -1,7 +1,7 @@
 package io.github.wolfandw.itest;
 
-import io.github.wolfandw.itest.configuration.DataSourceConfigurationTest;
-import io.github.wolfandw.itest.configuration.WebConfigurationTest;
+import io.github.wolfandw.itest.configuration.DataSourceConfigurationIntegrationTest;
+import io.github.wolfandw.itest.configuration.WebConfigurationIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -17,8 +17,8 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.sql.DataSource;
 
 @SpringJUnitConfig(classes = {
-        DataSourceConfigurationTest.class,
-        WebConfigurationTest.class
+        DataSourceConfigurationIntegrationTest.class,
+        WebConfigurationIntegrationTest.class
 })
 @WebAppConfiguration
 @TestPropertySource(locations = "classpath:test-application.properties")

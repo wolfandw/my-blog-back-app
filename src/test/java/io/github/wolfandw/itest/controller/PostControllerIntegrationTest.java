@@ -31,7 +31,7 @@ public class PostControllerIntegrationTest extends AbstractPostIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("Post 01 title"))
-                .andExpect(jsonPath("$.text").value("Post 01 text for 128-lenght string testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt128..."));
+                .andExpect(jsonPath("$.text").value("Post 01 text for 128-length string testtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt128..."));
     }
 
     @Test

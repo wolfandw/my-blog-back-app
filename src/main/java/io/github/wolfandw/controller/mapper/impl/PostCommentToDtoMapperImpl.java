@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostCommentToDtoMapperImpl implements PostCommentToDtoMapper {
     public PostCommentResponseDto mapPostCommentToPostCommentResponseDto(PostComment postComment) {
-        return new PostCommentResponseDto(postComment.getId(), postComment.getText(), postComment.getPostId());
+        return new PostCommentResponseDto(postComment.getId(),
+                postComment.getText(),
+                postComment.getPostId());
     }
 }

@@ -4,6 +4,7 @@ import io.github.wolfandw.model.PostComment;
 import io.github.wolfandw.repository.PostCommentRepository;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.service.PostCommentService;
+import io.github.wolfandw.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.stream.LongStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class PostCommentServiceTest extends AbstractPostServiceTest {
+public class PostCommentServiceTest extends AbstractPostTest {
     @Autowired
     private PostCommentService postCommentService;
 
@@ -100,7 +101,9 @@ public class PostCommentServiceTest extends AbstractPostServiceTest {
         String text = "Test Post " + postId + ", comment update" + commentId;
         PostComment postCommentBeforeUpdate = comments.get(postId).getLast();
 
-        PostComment mockPostComment = new PostComment(postCommentBeforeUpdate.getId(), text, postCommentBeforeUpdate.getPostId());
+        PostComment mockPostComment = new PostComment(postCommentBeforeUpdate.getId(),
+                text,
+                postCommentBeforeUpdate.getPostId());
         when(postCommentRepository.updatePostComment(postId, commentId, text)).thenReturn(Optional.of(mockPostComment));
 
         Optional<PostComment> postComment = postCommentService.updatePostComment(postId, commentId, text);

@@ -14,7 +14,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.sql.DataSource;
 
 @Configuration
-public class DataSourceConfigurationTest {
+public class DataSourceConfigurationIntegrationTest {
     @Bean
     public DataSource dataSource(
             @Value("${spring.datasource.url}") String url,
