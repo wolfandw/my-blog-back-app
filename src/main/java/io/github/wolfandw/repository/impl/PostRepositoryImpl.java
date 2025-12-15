@@ -5,6 +5,7 @@ import io.github.wolfandw.model.PostTag;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.repository.mapper.PostRowMapper;
 import io.github.wolfandw.repository.mapper.PostTagsRowMapper;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -160,7 +161,11 @@ public class PostRepositoryImpl implements PostRepository {
                     COUNT(*)
                 FROM post AS post_table
                 """ + where;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), Integer.class));
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), Integer.class));
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     private String buildGetPostsWhere(List<String> searchWords, List<String> tags, List<Object> args, List<Integer> argTypes) {
@@ -207,6 +212,7 @@ public class PostRepositoryImpl implements PostRepository {
                 LEFT JOIN tag AS tag_table ON post_tag_table.tag_id = tag_table.id
                 WHERE post_tag_table.post_id = ANY(?)
                 """;
+
         return jdbcTemplate.query(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postTagsRowMapper);
     }
 
@@ -225,7 +231,11 @@ public class PostRepositoryImpl implements PostRepository {
                 WHERE post_table.id = ?
                 """;
 
-        return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postRowMapper));
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(query, args.toArray(), RepositoryUtil.toIntArray(argTypes), postRowMapper));
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     private Optional<Long> executeQueryInsertPost(String title, String text) {

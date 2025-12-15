@@ -1,4 +1,4 @@
-package io.github.wolfandw.configuration;
+package io.github.wolfandw.itest.configuration;
 
 import org.h2.Driver;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import javax.sql.DataSource;
 
 @Configuration
-public class DataSourceConfiguration {
+public class DataSourceConfigurationTest {
     @Bean
     public DataSource dataSource(
             @Value("${spring.datasource.url}") String url,
@@ -40,7 +40,7 @@ public class DataSourceConfiguration {
         DataSource dataSource = event.getApplicationContext().getBean(DataSource.class);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("schema.sql"));
+        populator.addScript(new ClassPathResource("test-schema.sql"));
         populator.execute(dataSource);
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan({
-        "io.github.wolfandw.configuration",
         "io.github.wolfandw.controller",
         "io.github.wolfandw.repository",
         "io.github.wolfandw.service"

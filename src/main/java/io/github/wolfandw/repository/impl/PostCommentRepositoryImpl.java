@@ -119,7 +119,7 @@ public class PostCommentRepositoryImpl implements PostCommentRepository {
         String query = """
                 UPDATE comment
                 SET
-                    text = ?
+                    text = ?,
                     updated_at = ?
                 WHERE post_id = ? AND id = ?
                 """;

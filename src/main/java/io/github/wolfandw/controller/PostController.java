@@ -9,6 +9,7 @@ import io.github.wolfandw.dto.PostsPageResponseDto;
 import io.github.wolfandw.model.PostsPage;
 import io.github.wolfandw.service.PostService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +26,7 @@ public class PostController {
     }
 
     @GetMapping
-    public PostsPageResponseDto getPosts(
+    public PostsPageResponseDto getPostsPage(
             @RequestParam("search") String search,
             @RequestParam("pageNumber") int pageNumber,
             @RequestParam("pageSize") int pageSize) {
@@ -34,8 +35,9 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public PostResponseDto getPost(@PathVariable("id") Long id) {
-        return postService.getPost(id).map(postToDtoMapper::mapPostToPostResponseDto).orElse(null);
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable("id") Long id) {
+        return postService.getPost(id).map(postToDtoMapper::mapPostToPostResponseDto)
+                .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
