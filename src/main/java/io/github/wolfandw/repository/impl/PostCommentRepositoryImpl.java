@@ -17,12 +17,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация {@link PostCommentRepository}
+ */
 @Repository
 public class PostCommentRepositoryImpl implements PostCommentRepository {
     private final JdbcTemplate jdbcTemplate;
     private final PostRepository postRepository;
     private final PostCommentRowMapper postCommentRowMapper;
 
+    /**
+     * Создает репозиторий для работы с комментариев постов.
+     *
+     * @param jdbcTemplate         {@link JdbcTemplate}
+     * @param postRepository       репозиторий постов
+     * @param postCommentRowMapper маппер результатов запроса в комментарии постов
+     */
     public PostCommentRepositoryImpl(JdbcTemplate jdbcTemplate,
                                      PostRepository postRepository,
                                      PostCommentRowMapper postCommentRowMapper) {

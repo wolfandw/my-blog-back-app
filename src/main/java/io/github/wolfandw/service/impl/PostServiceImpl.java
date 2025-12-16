@@ -12,12 +12,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация {@link PostService}
+ */
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final PostCommentRepository postCommentRepository;
 
+    /**
+     * Создает сервис для работы с постами.
+     *
+     * @param postRepository        репозиторий постов
+     * @param postImageRepository   репозиторий картинок постов
+     * @param postCommentRepository репозиторий комментариев постов
+     */
     public PostServiceImpl(PostRepository postRepository,
                            PostImageRepository postImageRepository,
                            PostCommentRepository postCommentRepository) {

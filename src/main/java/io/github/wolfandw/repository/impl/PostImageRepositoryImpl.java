@@ -14,12 +14,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+/**
+ * Реализация {@link PostImageRepository}
+ */
 @Repository
 public class PostImageRepositoryImpl implements PostImageRepository {
     private static final String JPG = "jpg";
     private final String uploadPostsDir;
     private final PostRepository postRepository;
 
+    /**
+     * Создает репозиторий для работы с картинками постов.
+     *
+     * @param uploadPostsDir каталог загрузки файлов картинок
+     * @param postRepository репозиторий постов
+     */
     public PostImageRepositoryImpl(@Value("${my.blog.back.app.upload.posts.dir}") String uploadPostsDir,
                                    PostRepository postRepository) {
         this.uploadPostsDir = uploadPostsDir;

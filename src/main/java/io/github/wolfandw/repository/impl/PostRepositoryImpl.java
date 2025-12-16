@@ -21,12 +21,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Реализация {@link PostRepository}
+ */
 @Repository
 public class PostRepositoryImpl implements PostRepository {
     private final JdbcTemplate jdbcTemplate;
     private final PostRowMapper postRowMapper;
     private final PostTagsRowMapper postTagsRowMapper;
 
+    /**
+     * Создвние репозитория для работы с постами.
+     *
+     * @param jdbcTemplate      {@link JdbcTemplate}
+     * @param postRowMapper     маппер результато запроса в посты
+     * @param postTagsRowMapper маппер результатов запроса в тэги постов
+     */
     public PostRepositoryImpl(JdbcTemplate jdbcTemplate, PostRowMapper postRowMapper,
                               PostTagsRowMapper postTagsRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
@@ -214,6 +224,7 @@ public class PostRepositoryImpl implements PostRepository {
         List<Integer> argTypes = List.of(Types.ARRAY);
         String query = """
                 SELECT
+                    tag_table.id,
                     post_tag_table.post_id,
                     tag_table.name
                 FROM post_tag AS post_tag_table

@@ -9,11 +9,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация {@link PostCommentService}
+ */
 @Service
 public class PostCommentServiceImpl implements PostCommentService {
     private final PostRepository postRepository;
     private final PostCommentRepository postCommentRepository;
 
+    /**
+     * Создает сервис для работы с комментариями постов.
+     *
+     * @param postRepository        репозиторий постов
+     * @param postCommentRepository репозиторий комментариев постов
+     */
     public PostCommentServiceImpl(PostRepository postRepository, PostCommentRepository postCommentRepository) {
         this.postRepository = postRepository;
         this.postCommentRepository = postCommentRepository;

@@ -11,6 +11,9 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Интеграционный тест репозитория {@link PostImageRepository}
+ */
 public class PostImageRepositoryIntegrationTest extends AbstractPostIntegrationTest {
     @Autowired
     private PostImageRepository postImageRepository;

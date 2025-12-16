@@ -14,6 +14,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Интеграционный тест репозитория {@link PostCommentRepository}
+ */
 public class PostCommentRepositoryIntegrationTest extends AbstractPostIntegrationTest {
     @Autowired
     private PostCommentRepository postCommentRepository;

@@ -22,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
+/**
+ * Модульный тест сервиса постов.
+ */
 public class PostServiceTest extends AbstractPostTest {
     @Autowired
     @Qualifier("postServiceTest")

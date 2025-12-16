@@ -20,6 +20,9 @@ import java.util.stream.LongStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Модульный тест комментариев постов.
+ */
 public class PostCommentServiceTest extends AbstractPostTest {
     @Autowired
     private PostCommentService postCommentService;

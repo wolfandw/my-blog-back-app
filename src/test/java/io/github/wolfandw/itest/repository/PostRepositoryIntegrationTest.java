@@ -16,6 +16,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Интеграционный тест репозитория {@link PostRepository}
+ */
 public class PostRepositoryIntegrationTest extends AbstractPostIntegrationTest {
     @Autowired
     private PostRepository postRepository;

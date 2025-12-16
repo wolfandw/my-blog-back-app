@@ -14,8 +14,19 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.mockito.Mockito.mock;
 
+/**
+ * Тестовая конфигурация для модульных тестов.
+ */
 @Configuration
 public class PostTestConfiguration {
+    /**
+     * Создает тестовый сервис постов.
+     *
+     * @param postRepository        mock-репозиторий постов
+     * @param postImageRepository   mock-репозиторий картинок постов
+     * @param postCommentRepository mock-репозиторий комментариев постов
+     * @return тестовый сервис постов
+     */
     @Bean
     public PostService postServiceTest(PostRepository postRepository,
                                        PostImageRepository postImageRepository,
@@ -23,11 +34,24 @@ public class PostTestConfiguration {
         return new PostServiceImpl(postRepository, postImageRepository, postCommentRepository);
     }
 
+    /**
+     * Создает тестовый сервис картинок постов.
+     *
+     * @param postImageRepository mock-репозиторий картинок постов
+     * @return тестовый сервис картинок постов
+     */
     @Bean
     public PostImageService postImageServiceTest(PostImageRepository postImageRepository) {
         return new PostImageServiceImpl(postImageRepository);
     }
 
+    /**
+     * Создает тестовый сервис комментариев постов.
+     *
+     * @param postRepository        mock-репозиторий постов
+     * @param postCommentRepository mock-репозиторий комментариев постов
+     * @return тестовый сервис комментариев постов
+     */
     @Bean
     public PostCommentService postCommentServiceTest(PostRepository postRepository,
                                                      PostCommentRepository postCommentRepository) {
@@ -35,16 +59,31 @@ public class PostTestConfiguration {
     }
 
 
+    /**
+     * Создает mock-репозиторий постов.
+     *
+     * @return mock-репозиторий постов
+     */
     @Bean
     public PostRepository postRepositoryTest() {
         return mock(PostRepository.class);
     }
 
+    /**
+     * Создает mock-репозиторий картинок постов.
+     *
+     * @return mock-репозиторий картинок постов
+     */
     @Bean
     public PostImageRepository postImageRepositoryTest() {
         return mock(PostImageRepository.class);
     }
 
+    /**
+     * Создает mock-репозиторий комментариев постов.
+     *
+     * @return mock-репозиторий комментариев постов
+     */
     @Bean
     public PostCommentRepository postCommentRepositoryTest() {
         return mock(PostCommentRepository.class);

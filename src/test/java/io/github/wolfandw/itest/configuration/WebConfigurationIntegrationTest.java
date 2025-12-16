@@ -4,6 +4,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+/**
+ * Основная онфигурация для интеграционных тестов.
+ */
 @Configuration
 @EnableWebMvc
 @ComponentScan({

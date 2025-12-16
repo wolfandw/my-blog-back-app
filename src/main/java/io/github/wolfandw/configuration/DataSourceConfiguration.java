@@ -13,8 +13,19 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.sql.DataSource;
 
+/**
+ * Конфигурация источника данных.
+ */
 @Configuration
 public class DataSourceConfiguration {
+    /**
+     * Создает  источник данных.
+     *
+     * @param url      JDBC URL
+     * @param username имя пользователя
+     * @param password пароль
+     * @return источник данных
+     */
     @Bean
     public DataSource dataSource(@Value("${spring.datasource.url}") String url, @Value("${spring.datasource.username}") String username, @Value("${spring.datasource.password}") String password) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -26,11 +37,22 @@ public class DataSourceConfiguration {
         return dataSource;
     }
 
+    /**
+     * Создает {@link JdbcTemplate}.
+     *
+     * @param dataSource источник данных
+     * @return {@link JdbcTemplate}
+     */
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
+    /**
+     * Инициализирует схему продуктовой базы данных.
+     *
+     * @param event событие обновления контекста
+     */
     @EventListener
     public void populate(ContextRefreshedEvent event) {
         DataSource dataSource = event.getApplicationContext().getBean(DataSource.class);

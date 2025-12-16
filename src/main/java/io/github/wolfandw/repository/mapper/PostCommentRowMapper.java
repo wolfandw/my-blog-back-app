@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Маппер результатов запроса в комментарии постов.
+ */
 @Component
 public class PostCommentRowMapper implements RowMapper<PostComment> {
     @Override

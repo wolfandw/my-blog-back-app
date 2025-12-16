@@ -1,5 +1,6 @@
 package io.github.wolfandw.itest.controller;
 
+import io.github.wolfandw.controller.PostImageController;
 import io.github.wolfandw.itest.AbstractPostIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -10,6 +11,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Интеграционный тест контроллера {@link PostImageController}
+ */
 public class PostImageControllerIntegrationTest extends AbstractPostIntegrationTest {
     @Test
     void getPostsPageTest() throws Exception {

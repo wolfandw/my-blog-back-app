@@ -18,6 +18,9 @@ import java.util.stream.LongStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Модульный тест картинок постов.
+ */
 public class PostImageServiceTest extends AbstractPostTest {
     @Autowired
     private PostImageService postImageService;

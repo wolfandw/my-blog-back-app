@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Маппер результатов запроса в посты.
+ */
 @Component
 public class PostRowMapper implements RowMapper<Post> {
     @Override

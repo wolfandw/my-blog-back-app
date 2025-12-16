@@ -6,10 +6,18 @@ import io.github.wolfandw.dto.PostsPageResponseDto;
 import io.github.wolfandw.model.PostsPage;
 import org.springframework.stereotype.Component;
 
+/**
+ * Реализация {@link PostsPageToDtoMapper}.
+ */
 @Component
 public class PostsPageToDtoMapperImpl implements PostsPageToDtoMapper {
     private final PostToDtoMapper postToDtoMapper;
 
+    /**
+     * Создание маппера страницы постов.
+     *
+     * @param postToDtoMapper маппер постов
+     */
     public PostsPageToDtoMapperImpl(PostToDtoMapper postToDtoMapper) {
         this.postToDtoMapper = postToDtoMapper;
     }

@@ -1,5 +1,6 @@
 package io.github.wolfandw.itest.controller;
 
+import io.github.wolfandw.controller.PostController;
 import io.github.wolfandw.itest.AbstractPostIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -8,6 +9,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Интеграционный тест контроллера {@link PostController}
+ */
 public class PostControllerIntegrationTest extends AbstractPostIntegrationTest {
     @Test
     void getPostsPageTest() throws Exception {

@@ -16,6 +16,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
 
+/**
+ * Абстрактный интеграционный тест.
+ */
 @SpringJUnitConfig(classes = {
         DataSourceConfigurationIntegrationTest.class,
         WebConfigurationIntegrationTest.class
