@@ -1,32 +1,24 @@
 package io.github.wolfandw.repository;
 
-import io.github.wolfandw.model.PostImage;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Optional;
 
 /**
  * Ревозиторий для работы с картинками постов.
  */
 public interface PostImageRepository {
     /**
-     * Возвращает картинку поста.
+     * Обновляет имя файла картинки.
      *
-     * @param postId идентификатор поста
-     * @return картинка поста
+     * @param postId    идентификатор поста
+     * @param imageName имя файла картинки
      */
-    PostImage getPostImage(Long postId);
+    void updatePostImageName(Long postId, String imageName);
 
     /**
-     * Обновляет картинку поста.
+     * Возвращает имя файла картинки поста.
      *
      * @param postId идентификатор поста
-     * @param image  файл картинки поста
+     * @return имя файла картинки
      */
-    void updatePostImage(Long postId, MultipartFile image);
-
-    /**
-     * Удаляет картинку поста.
-     *
-     * @param postId идентификатор поста
-     */
-    void deletePostImage(Long postId);
+    Optional<String> getPostImageName(Long postId);
 }

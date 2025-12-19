@@ -22,4 +22,11 @@ public interface PostImageService {
      * @param image  файл картинки поста
      */
     void updatePostImage(Long postId, MultipartFile image);
+
+    /**
+     * Удаляет картинку поста.
+     *
+     * @param postId идентификатор поста
+     */
+    void deletePostImage(Long postId);
 }

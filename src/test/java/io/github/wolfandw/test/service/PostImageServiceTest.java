@@ -6,13 +6,13 @@ import io.github.wolfandw.service.PostImageService;
 import io.github.wolfandw.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +28,6 @@ public class PostImageServiceTest extends AbstractPostTest {
     @Autowired
     private PostImageRepository postImageRepository;
 
-    @Mock
-    private MultipartFile multipartFile;
-
     private Map<Long, PostImage> images = new HashMap<>();
 
     @BeforeEach
@@ -39,7 +36,7 @@ public class PostImageServiceTest extends AbstractPostTest {
 
         images = LongStream.range(1, 16).boxed().collect(HashMap::new,
                 (m, postId) -> m.put(postId,
-                        new PostImage(new byte[]{postId.byteValue()}, MediaType.IMAGE_PNG, postId)),
+                        new PostImage(new byte[0], MediaType.APPLICATION_OCTET_STREAM, postId)),
                 HashMap::putAll);
     }
 
@@ -47,7 +44,8 @@ public class PostImageServiceTest extends AbstractPostTest {
     void testGetPostImage() {
         Long postId = 5L;
         PostImage mockPostImage = images.get(postId);
-        when(postImageRepository.getPostImage(postId)).thenReturn(mockPostImage);
+        Optional<String> mockPostImageName = Optional.of(postId + ".png");
+        when(postImageRepository.getPostImageName(postId)).thenReturn(mockPostImageName);
         PostImage postImage = postImageService.getPostImage(postId);
 
         assertNotNull(postImage, "Картинка поста должна быть получена");
@@ -59,10 +57,17 @@ public class PostImageServiceTest extends AbstractPostTest {
     @Test
     void testUpdatePostImage() {
         Long postId = 5L;
-        doNothing().when(postImageRepository).updatePostImage(postId, multipartFile);
+        String mockPostImageName = postId + ".jpg";
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "image",
+                mockPostImageName,
+                MediaType.IMAGE_JPEG_VALUE,
+                new byte[0]
+        );
+        doNothing().when(postImageRepository).updatePostImageName(postId, mockPostImageName);
 
         postImageService.updatePostImage(postId, multipartFile);
 
-        verify(postImageRepository).updatePostImage(postId, multipartFile);
+        verify(postImageRepository).updatePostImageName(postId, mockPostImageName);
     }
 }

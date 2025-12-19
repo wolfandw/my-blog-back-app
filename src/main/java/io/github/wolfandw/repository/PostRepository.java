@@ -86,21 +86,5 @@ public interface PostRepository {
      * @return общее количество постов
      */
     int getPostsCount(List<String> searchWords, List<String> tags);
-
-    /**
-     * Обновляет имя файла картинки.
-     *
-     * @param postId    идентификатор поста
-     * @param imageName имя файла картинки
-     */
-    void updatePostImageName(Long postId, String imageName);
-
-    /**
-     * Возвращает имя файла картинки поста.
-     *
-     * @param postId идентификатор поста
-     * @return имя файла картинки
-     */
-    Optional<String> getPostImageName(Long postId);
 }
 

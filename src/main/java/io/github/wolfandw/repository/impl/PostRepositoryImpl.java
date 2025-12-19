@@ -101,44 +101,21 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public int increasePostLikesCount(Long postId) {
+        executeQueryIncreasePostLikesCount(postId);
         Optional<Post> post = executeQueryGetPost(postId);
-        return post.map(p -> {
-            int likesCount = p.getLikesCount();
-            likesCount++;
-            executeQueryUpdatePostLikesCount(postId, likesCount);
-            return likesCount;
-        }).orElse(0);
+        return post.map(Post::getLikesCount).orElse(0);
     }
 
     @Override
     public void increasePostCommentCount(Long postId) {
-        Optional<Post> post = executeQueryGetPost(postId);
-        post.ifPresent(p -> {
-            int commentCount = p.getCommentsCount();
-            commentCount++;
-            executeQueryUpdatePostCommentsCount(postId, commentCount);
-        });
+        executeQueryIncreasePostCommentsCount(postId);
     }
 
     @Override
     public void decreasePostCommentCount(Long postId) {
-        Optional<Post> post = executeQueryGetPost(postId);
-        post.ifPresent(p -> {
-            int commentCount = p.getCommentsCount();
-            commentCount--;
-            executeQueryUpdatePostCommentsCount(postId, Math.max(commentCount, 0));
-        });
+        executeQueryDecreasePostCommentsCount(postId);
     }
 
-    @Override
-    public void updatePostImageName(Long postId, String imageName) {
-        executeQueryUpdatePostImageName(postId, imageName);
-    }
-
-    @Override
-    public Optional<String> getPostImageName(Long postId) {
-        return getPost(postId).map(Post::getImageName);
-    }
 
     private List<Post> executeQueryGetPosts(List<String> searchWords, List<String> tags, int pageNumber, int pageSize) {
         List<Object> args = new ArrayList<>();
@@ -342,35 +319,37 @@ public class PostRepositoryImpl implements PostRepository {
         jdbcTemplate.update(query, postId);
     }
 
-    private void executeQueryUpdatePostImageName(Long postId, String imageName) {
+    private void executeQueryIncreasePostLikesCount(Long postId) {
         String query = """
                 UPDATE post
-                SET
-                    image_name = ?
+                SET likes_count = (likes_count + 1)
                 WHERE id = ?
                 """;
 
-        jdbcTemplate.update(query, imageName, postId);
+        jdbcTemplate.update(query, postId);
     }
 
-    private void executeQueryUpdatePostLikesCount(Long postId, int value) {
+    private void executeQueryIncreasePostCommentsCount(Long postId) {
         String query = """
                 UPDATE post
-                SET likes_count = ?
+                SET comments_count = (comments_count + 1)
                 WHERE id = ?
                 """;
 
-        jdbcTemplate.update(query, value, postId);
+        jdbcTemplate.update(query, postId);
     }
 
-    private void executeQueryUpdatePostCommentsCount(Long postId, int value) {
+    private void executeQueryDecreasePostCommentsCount(Long postId) {
         String query = """
                 UPDATE post
-                SET comments_count = ?
+                SET comments_count = CASE
+                                         WHEN comments_count < 1 THEN 0
+                                         ELSE comments_count - 1
+                                     END
                 WHERE id = ?
                 """;
 
-        jdbcTemplate.update(query, value, postId);
+        jdbcTemplate.update(query, postId);
     }
 
     private void updatePostTags(Long postId, Post post) {

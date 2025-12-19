@@ -183,25 +183,4 @@ public class PostRepositoryIntegrationTest extends AbstractPostIntegrationTest {
 
         assertEquals(13, postCount, "Общее количество постов должно совпадать");
     }
-
-    @Test
-    void updatePostImageNameTest() {
-        Optional<Post> postBefore = postRepository.getPost(13L);
-        assertTrue(postBefore.isPresent(), "Пост до изменения должен быть");
-        assertEquals("13.png", postBefore.get().getImageName(), "Имя картинки должно совпадать");
-
-        postRepository.updatePostImageName(13L, "133.jpg");
-
-        Optional<Post> post = postRepository.getPost(13L);
-        assertTrue(post.isPresent(), "Пост после изменения должен быть");
-        assertEquals("133.jpg", post.get().getImageName(), "Новое имя картинки должно быть установлено");
-    }
-
-    @Test
-    void getPostImageNameTest() {
-        Optional<Post> post = postRepository.getPost(13L);
-
-        assertTrue(post.isPresent(), "Пост должен быть");
-        assertEquals("13.png", post.get().getImageName(), "Имя картинки должно совпадать");
-    }
 }

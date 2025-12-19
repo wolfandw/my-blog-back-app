@@ -3,14 +3,12 @@ package io.github.wolfandw.test.service;
 import io.github.wolfandw.model.Post;
 import io.github.wolfandw.model.PostsPage;
 import io.github.wolfandw.repository.PostCommentRepository;
-import io.github.wolfandw.repository.PostImageRepository;
 import io.github.wolfandw.repository.PostRepository;
 import io.github.wolfandw.service.PostService;
 import io.github.wolfandw.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 import java.util.Map;
@@ -27,14 +25,10 @@ import static org.mockito.Mockito.*;
  */
 public class PostServiceTest extends AbstractPostTest {
     @Autowired
-    @Qualifier("postServiceTest")
     private PostService postService;
 
     @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private PostImageRepository postImageRepository;
 
     @Autowired
     private PostCommentRepository postCommentRepository;
@@ -44,7 +38,6 @@ public class PostServiceTest extends AbstractPostTest {
     @BeforeEach
     void setUp() {
         reset(postRepository);
-        reset(postImageRepository);
         reset(postCommentRepository);
 
         posts = LongStream.range(1, 16).boxed().collect(TreeMap::new, (m, postId) ->
@@ -178,13 +171,11 @@ public class PostServiceTest extends AbstractPostTest {
     void testDeletePost() {
         Long postId = 5L;
         doNothing().when(postCommentRepository).deletePostComments(postId);
-        doNothing().when(postImageRepository).deletePostImage(postId);
         doNothing().when(postRepository).deletePost(postId);
 
         postService.deletePost(postId);
 
         verify(postCommentRepository).deletePostComments(postId);
-        verify(postImageRepository).deletePostImage(postId);
         verify(postRepository).deletePost(postId);
     }
 

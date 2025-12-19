@@ -19,7 +19,7 @@ public class PostImageControllerIntegrationTest extends AbstractPostIntegrationT
     void getPostsPageTest() throws Exception {
         mockMvc.perform(get("/api/posts/1/image"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
                 .andExpect(content().bytes(new byte[0]));
     }
 

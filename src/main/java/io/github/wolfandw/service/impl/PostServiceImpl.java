@@ -3,10 +3,11 @@ package io.github.wolfandw.service.impl;
 import io.github.wolfandw.model.Post;
 import io.github.wolfandw.model.PostsPage;
 import io.github.wolfandw.repository.PostCommentRepository;
-import io.github.wolfandw.repository.PostImageRepository;
 import io.github.wolfandw.repository.PostRepository;
+import io.github.wolfandw.service.PostImageService;
 import io.github.wolfandw.service.PostService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,24 +19,25 @@ import java.util.Optional;
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
-    private final PostImageRepository postImageRepository;
+    private final PostImageService postImageService;
     private final PostCommentRepository postCommentRepository;
 
     /**
      * Создает сервис для работы с постами.
      *
      * @param postRepository        репозиторий постов
-     * @param postImageRepository   репозиторий картинок постов
+     * @param postImageService      сервис картинок постов
      * @param postCommentRepository репозиторий комментариев постов
      */
     public PostServiceImpl(PostRepository postRepository,
-                           PostImageRepository postImageRepository,
+                           PostImageService postImageService,
                            PostCommentRepository postCommentRepository) {
         this.postRepository = postRepository;
-        this.postImageRepository = postImageRepository;
+        this.postImageService = postImageService;
         this.postCommentRepository = postCommentRepository;
     }
 
+    @Transactional
     @Override
     public PostsPage getPostsPage(String search, int pageNumber, int pageSize) {
         List<String> searchWords = new ArrayList<>();
@@ -64,28 +66,33 @@ public class PostServiceImpl implements PostService {
         return new PostsPage(posts, hasPrev, hasNext, lastPage);
     }
 
+    @Transactional
     @Override
     public Optional<Post> getPost(Long postId) {
         return postRepository.getPost(postId);
     }
 
+    @Transactional
     @Override
     public Optional<Post> createPost(String title, String text, List<String> tags) {
         return postRepository.createPost(title, text, tags);
     }
 
+    @Transactional
     @Override
     public Optional<Post> updatePost(Long postId, String title, String text, List<String> tags) {
         return postRepository.updatePost(postId, title, text, tags);
     }
 
+    @Transactional
     @Override
     public void deletePost(Long postId) {
         postCommentRepository.deletePostComments(postId);
-        postImageRepository.deletePostImage(postId);
+        postImageService.deletePostImage(postId);
         postRepository.deletePost(postId);
     }
 
+    @Transactional
     @Override
     public int increasePostLikesCount(Long postId) {
         return postRepository.increasePostLikesCount(postId);

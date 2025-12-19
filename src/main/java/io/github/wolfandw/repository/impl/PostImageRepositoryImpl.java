@@ -1,17 +1,11 @@
 package io.github.wolfandw.repository.impl;
 
-import io.github.wolfandw.model.PostImage;
+import io.github.wolfandw.model.Post;
 import io.github.wolfandw.repository.PostImageRepository;
 import io.github.wolfandw.repository.PostRepository;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -19,99 +13,38 @@ import java.util.Optional;
  */
 @Repository
 public class PostImageRepositoryImpl implements PostImageRepository {
-    private static final String JPG = "jpg";
-    private final String uploadPostsDir;
+    private final JdbcTemplate jdbcTemplate;
     private final PostRepository postRepository;
 
     /**
-     * Создает репозиторий для работы с картинками постов.
+     * Создание репозитория для работы с картинками постов.
      *
-     * @param uploadPostsDir каталог загрузки файлов картинок
+     * @param jdbcTemplate   {@link JdbcTemplate}
      * @param postRepository репозиторий постов
      */
-    public PostImageRepositoryImpl(@Value("${my.blog.back.app.upload.posts.dir}") String uploadPostsDir,
-                                   PostRepository postRepository) {
-        this.uploadPostsDir = uploadPostsDir;
+    public PostImageRepositoryImpl(JdbcTemplate jdbcTemplate, PostRepository postRepository) {
+        this.jdbcTemplate = jdbcTemplate;
         this.postRepository = postRepository;
     }
 
     @Override
-    public PostImage getPostImage(Long postId) {
-        try {
-            Path uploadDir = Paths.get(uploadPostsDir);
-            if (Files.exists(uploadDir)) {
-                Optional<String> imageName = postRepository.getPostImageName(postId);
-                if (imageName.isPresent()) {
-                    Path imagePath = uploadDir.resolve(imageName.get()).normalize();
-                    if (Files.exists(imagePath)) {
-                        byte[] content = Files.readAllBytes(imagePath);
-                        return new PostImage(content, getMediaType(content), postId);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // Do nothing
-        }
-        return new PostImage(new byte[0], MediaType.IMAGE_JPEG, postId);
+    public void updatePostImageName(Long postId, String imageName) {
+        executeQueryUpdatePostImageName(postId, imageName);
     }
 
     @Override
-    public void updatePostImage(Long postId, MultipartFile image) {
-        postRepository.getPost(postId).ifPresent(post -> {
-            try {
-                Path uploadDir = Paths.get(uploadPostsDir);
-                if (!Files.exists(uploadDir)) {
-                    Files.createDirectories(uploadDir);
-                }
-                String originName = image.getOriginalFilename();
-                String extension = getImageExtension(originName);
-                String imageName = post.getId().toString() + "." + extension;
-                Path imagePath = uploadDir.resolve(imageName);
-                image.transferTo(imagePath);
-                postRepository.updatePostImageName(post.getId(), imageName);
-            } catch (IOException e) {
-                // Do nothing
-            }
-        });
+    public Optional<String> getPostImageName(Long postId) {
+        return postRepository.getPost(postId).map(Post::getImageName);
     }
 
-    @Override
-    public void deletePostImage(Long postId) {
-        try {
-            Path uploadDir = Paths.get(uploadPostsDir);
-            if (Files.exists(uploadDir)) {
-                Optional<String> imageName = postRepository.getPostImageName(postId);
-                if (imageName.isPresent()) {
-                    Path imagePath = uploadDir.resolve(imageName.get()).normalize();
-                    if (Files.exists(imagePath)) {
-                        Files.delete(imagePath);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // Do nothing
-        }
-    }
+    private void executeQueryUpdatePostImageName(Long postId, String imageName) {
+        String query = """
+                UPDATE post
+                SET
+                    image_name = ?
+                WHERE id = ?
+                """;
 
-    private MediaType getMediaType(byte[] content) {
-        if (content != null) {
-            if (content.length >= 3 && content[0] == (byte) 0xFF && content[1] == (byte) 0xD8) {
-                return MediaType.IMAGE_JPEG;
-            }
-            if (content.length >= 8 && content[0] == (byte) 0x89 && content[1] == 0x50) {
-                return MediaType.IMAGE_PNG;
-            }
-        }
-        return MediaType.APPLICATION_OCTET_STREAM;
-    }
-
-    private String getImageExtension(String originName) {
-        if (originName != null && originName.lastIndexOf('.') != -1) {
-            String extension = originName.substring(originName.lastIndexOf('.') + 1).toLowerCase();
-            if (!extension.isEmpty()) {
-                return extension;
-            }
-        }
-        return JPG;
+        jdbcTemplate.update(query, imageName, postId);
     }
 }
