@@ -1,0 +1,42 @@
+DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS post_tag;
+DROP TABLE IF EXISTS tag;
+DROP TABLE IF EXISTS post;
+
+CREATE TABLE IF NOT EXISTS post (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    text TEXT NOT NULL,
+    likes_count INTEGER DEFAULT 0 NOT NULL,
+    comments_count INTEGER DEFAULT 0 NOT NULL,
+    image_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+CREATE INDEX idx_post_title ON post(title);
+
+CREATE TABLE IF NOT EXISTS comment (
+    id BIGSERIAL PRIMARY KEY,
+    text TEXT NOT NULL,
+    post_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_comment_post_id ON comment(post_id);
+
+CREATE TABLE IF NOT EXISTS tag (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+CREATE INDEX idx_tag_name ON tag(name);
+
+CREATE TABLE IF NOT EXISTS post_tag (
+    post_id BIGINT NOT NULL,
+    tag_id BIGINT NOT NULL,
+    PRIMARY KEY (post_id, tag_id),
+    FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_post_tag_tag_id ON post_tag(tag_id);
+CREATE INDEX idx_post_tag_post_id ON post_tag(post_id);
