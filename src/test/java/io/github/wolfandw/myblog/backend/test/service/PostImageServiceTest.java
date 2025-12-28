@@ -7,6 +7,7 @@ import io.github.wolfandw.myblog.backend.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -23,16 +24,18 @@ import static org.mockito.Mockito.*;
  */
 public class PostImageServiceTest extends AbstractPostTest {
     @Autowired
-    private PostImageService postImageService;
+    @Qualifier("postImageServiceTest")
+    private PostImageService postImageServiceTest;
 
     @Autowired
-    private PostImageRepository postImageRepository;
+    @Qualifier("postImageRepositoryTest")
+    private PostImageRepository postImageRepositoryTest;
 
     private Map<Long, PostImage> images = new HashMap<>();
 
     @BeforeEach
     void setUp() {
-        reset(postImageRepository);
+        reset(postImageRepositoryTest);
 
         images = LongStream.range(1, 16).boxed().collect(HashMap::new,
                 (m, postId) -> m.put(postId,
@@ -45,8 +48,8 @@ public class PostImageServiceTest extends AbstractPostTest {
         Long postId = 5L;
         PostImage mockPostImage = images.get(postId);
         Optional<String> mockPostImageName = Optional.of(postId + ".png");
-        when(postImageRepository.getPostImageName(postId)).thenReturn(mockPostImageName);
-        PostImage postImage = postImageService.getPostImage(postId);
+        when(postImageRepositoryTest.getPostImageName(postId)).thenReturn(mockPostImageName);
+        PostImage postImage = postImageServiceTest.getPostImage(postId);
 
         assertNotNull(postImage, "Картинка поста должна быть получена");
         assertArrayEquals(mockPostImage.getData(), postImage.getData(), "Данные картинки должны быть равны исходным");
@@ -64,10 +67,10 @@ public class PostImageServiceTest extends AbstractPostTest {
                 MediaType.IMAGE_JPEG_VALUE,
                 new byte[0]
         );
-        doNothing().when(postImageRepository).updatePostImageName(postId, mockPostImageName);
+        doNothing().when(postImageRepositoryTest).updatePostImageName(postId, mockPostImageName);
 
-        postImageService.updatePostImage(postId, multipartFile);
+        postImageServiceTest.updatePostImage(postId, multipartFile);
 
-        verify(postImageRepository).updatePostImageName(postId, mockPostImageName);
+        verify(postImageRepositoryTest).updatePostImageName(postId, mockPostImageName);
     }
 }

@@ -24,7 +24,7 @@ import javax.sql.DataSource;
         WebConfigurationIntegrationTest.class
 })
 @WebAppConfiguration
-@TestPropertySource(locations = "classpath:test-application.properties")
+@TestPropertySource(locations = "classpath:application.properties")
 public abstract class AbstractPostIntegrationTest {
     @Autowired
     protected WebApplicationContext wac;

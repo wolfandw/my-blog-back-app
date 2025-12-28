@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * Реализация контроллера картинок постов.
  */
-@RestController
+@RestController("postImageController")
 @RequestMapping("/api/posts")
 public class PostImageController {
     private final PostImageService postImageService;

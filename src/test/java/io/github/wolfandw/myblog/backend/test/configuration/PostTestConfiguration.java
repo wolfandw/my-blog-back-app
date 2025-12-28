@@ -11,53 +11,54 @@ import io.github.wolfandw.myblog.backend.service.impl.FileStorageServiceImpl;
 import io.github.wolfandw.myblog.backend.service.impl.PostCommentServiceImpl;
 import io.github.wolfandw.myblog.backend.service.impl.PostImageServiceImpl;
 import io.github.wolfandw.myblog.backend.service.impl.PostServiceImpl;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import static org.mockito.Mockito.mock;
 
 /**
  * Тестовая конфигурация для модульных тестов.
  */
-@Configuration
+@TestConfiguration
 public class PostTestConfiguration {
     /**
      * Создает тестовый сервис постов.
      *
-     * @param postRepository        mock-репозиторий постов
-     * @param postImageService      mock-сервис картинок постов
-     * @param postCommentRepository mock-репозиторий комментариев постов
+     * @param postRepositoryTest        mock-репозиторий постов
+     * @param postImageServiceTest      mock-сервис картинок постов
+     * @param postCommentRepositoryTest mock-репозиторий комментариев постов
      * @return тестовый сервис постов
      */
     @Bean
-    public PostService postServiceTest(PostRepository postRepository,
-                                       PostImageService postImageService,
-                                       PostCommentRepository postCommentRepository) {
-        return new PostServiceImpl(postRepository, postImageService, postCommentRepository);
+    public PostService postServiceTest(PostRepository postRepositoryTest,
+                                       PostImageService postImageServiceTest,
+                                       PostCommentRepository postCommentRepositoryTest) {
+        return new PostServiceImpl(postRepositoryTest, postImageServiceTest, postCommentRepositoryTest);
     }
 
     /**
      * Создает тестовый сервис картинок постов.
      *
-     * @param postImageRepository mock-репозиторий картинок постов
+     * @param postImageRepositoryTest mock-репозиторий картинок постов
      * @return тестовый сервис картинок постов
      */
     @Bean
-    public PostImageService postImageServiceTest(PostImageRepository postImageRepository, FileStorageService fileStorageService) {
-        return new PostImageServiceImpl(postImageRepository, fileStorageService);
+    public PostImageService postImageServiceTest(PostImageRepository postImageRepositoryTest, FileStorageService fileStorageServiceTest) {
+        return new PostImageServiceImpl(postImageRepositoryTest, fileStorageServiceTest);
     }
 
     /**
      * Создает тестовый сервис комментариев постов.
      *
-     * @param postRepository        mock-репозиторий постов
-     * @param postCommentRepository mock-репозиторий комментариев постов
+     * @param postRepositoryTest        mock-репозиторий постов
+     * @param postCommentRepositoryTest mock-репозиторий комментариев постов
      * @return тестовый сервис комментариев постов
      */
     @Bean
-    public PostCommentService postCommentServiceTest(PostRepository postRepository,
-                                                     PostCommentRepository postCommentRepository) {
-        return new PostCommentServiceImpl(postRepository, postCommentRepository);
+    public PostCommentService postCommentServiceTest(PostRepository postRepositoryTest,
+                                                     PostCommentRepository postCommentRepositoryTest) {
+        return new PostCommentServiceImpl(postRepositoryTest, postCommentRepositoryTest);
     }
 
     /**
@@ -66,6 +67,7 @@ public class PostTestConfiguration {
      * @return тестовый сервис по работе с файлами
      */
     @Bean
+    @Order
     public FileStorageService fileStorageServiceTest() {
         return new FileStorageServiceImpl("upload/posts/");
     }

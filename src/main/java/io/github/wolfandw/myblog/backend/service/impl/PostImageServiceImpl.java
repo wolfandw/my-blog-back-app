@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Реализация {@link PostImageService}
  */
-@Service
+@Service("postImageService")
 public class PostImageServiceImpl implements PostImageService {
     private static final String JPG = "jpg";
     private static final Logger log = LoggerFactory.getLogger(PostImageServiceImpl.class);

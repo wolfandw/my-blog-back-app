@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Реализация {@link PostCommentRepository}
  */
-@Repository
+@Repository("postCommentRepository")
 public class PostCommentRepositoryImpl implements PostCommentRepository {
     private final JdbcTemplate jdbcTemplate;
     private final PostRepository postRepository;

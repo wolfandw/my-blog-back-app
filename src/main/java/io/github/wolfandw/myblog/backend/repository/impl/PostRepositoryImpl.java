@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Реализация {@link PostRepository}
  */
-@Repository
+@Repository("postRepository")
 public class PostRepositoryImpl implements PostRepository {
     private final JdbcTemplate jdbcTemplate;
     private final PostRowMapper postRowMapper;

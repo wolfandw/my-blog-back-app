@@ -7,6 +7,7 @@ import org.mockito.Answers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,7 +28,8 @@ public class FileStorageServiceTest extends AbstractPostTest {
     private static final Path FILE_PATH = PATH_DIR.resolve(FILE_NAME);
 
     @Autowired
-    private FileStorageService fileStorageService;
+    @Qualifier("fileStorageServiceTest")
+    private FileStorageService fileStorageServiceTest;
 
     @Test
     void readFileFileTest() throws IOException {
@@ -45,7 +47,7 @@ public class FileStorageServiceTest extends AbstractPostTest {
             mockFiles.when(() -> Files.exists(FILE_PATH)).thenReturn(true);
             mockFiles.when(() -> Files.readAllBytes(FILE_PATH)).thenReturn(expectedContent);
 
-            byte[] actualContent = fileStorageService.readFile(FILE_NAME);
+            byte[] actualContent = fileStorageServiceTest.readFile(FILE_NAME);
 
             assertArrayEquals(expectedContent, actualContent, "Содержимое файлов должно совпадать");
         }
@@ -67,7 +69,7 @@ public class FileStorageServiceTest extends AbstractPostTest {
         MultipartFile mockMultipartFile = Mockito.mock(MultipartFile.class);
         doNothing().when(mockMultipartFile).transferTo(FILE_PATH);
 
-        fileStorageService.writeFile(FILE_NAME, mockMultipartFile);
+        fileStorageServiceTest.writeFile(FILE_NAME, mockMultipartFile);
 
         verify(mockMultipartFile).transferTo(FILE_PATH);
     }
@@ -87,7 +89,7 @@ public class FileStorageServiceTest extends AbstractPostTest {
             mockFiles.when(() -> Files.exists(FILE_PATH)).thenReturn(true);
             mockFiles.when(() -> Files.delete(FILE_PATH)).thenAnswer(Answers.RETURNS_DEFAULTS);
 
-            fileStorageService.deleteFile(FILE_NAME);
+            fileStorageServiceTest.deleteFile(FILE_NAME);
             mockFiles.verify(() -> Files.delete(FILE_PATH));
         }
     }

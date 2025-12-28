@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Реазизация контроллера комментариев постов.
  */
-@RestController
+@RestController("postCommentController")
 @RequestMapping("/api/posts")
 public class PostCommentController {
     private final PostCommentService postCommentService;

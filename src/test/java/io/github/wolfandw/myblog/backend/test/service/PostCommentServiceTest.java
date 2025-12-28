@@ -8,6 +8,7 @@ import io.github.wolfandw.myblog.backend.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,20 +26,23 @@ import static org.mockito.Mockito.*;
  */
 public class PostCommentServiceTest extends AbstractPostTest {
     @Autowired
-    private PostCommentService postCommentService;
+    @Qualifier("postCommentServiceTest")
+    private PostCommentService postCommentServiceTest;
 
     @Autowired
-    private PostRepository postRepository;
+    @Qualifier("postRepositoryTest")
+    private PostRepository postRepositoryTest;
 
     @Autowired
-    private PostCommentRepository postCommentRepository;
+    @Qualifier("postCommentRepositoryTest")
+    private PostCommentRepository postCommentRepositoryTest;
 
     private Map<Long, List<PostComment>> comments = new HashMap<>();
 
     @BeforeEach
     void setUp() {
-        reset(postRepository);
-        reset(postCommentRepository);
+        reset(postRepositoryTest);
+        reset(postCommentRepositoryTest);
 
         comments = LongStream.range(1, 16).boxed()
                 .collect(Collectors.toMap(Function.identity(), postId -> LongStream.range(1, 4)
@@ -53,9 +57,9 @@ public class PostCommentServiceTest extends AbstractPostTest {
     void testGetPostComments() {
         Long postId = 5L;
         List<PostComment> mockPostComments = comments.get(postId);
-        when(postCommentRepository.getPostComments(postId)).thenReturn(mockPostComments);
+        when(postCommentRepositoryTest.getPostComments(postId)).thenReturn(mockPostComments);
 
-        List<PostComment> postComments = postCommentService.getPostComments(postId);
+        List<PostComment> postComments = postCommentServiceTest.getPostComments(postId);
         assertArrayEquals(mockPostComments.toArray(), postComments.toArray(),
                 "Список комментариев постов должен соответствовать исходному");
     }
@@ -66,9 +70,9 @@ public class PostCommentServiceTest extends AbstractPostTest {
         Long commentId = 3L;
 
         PostComment mockPostComment = comments.get(postId).getLast();
-        when(postCommentRepository.getPostComment(postId, commentId)).thenReturn(Optional.of(mockPostComment));
+        when(postCommentRepositoryTest.getPostComment(postId, commentId)).thenReturn(Optional.of(mockPostComment));
 
-        Optional<PostComment> postComment = postCommentService.getPostComment(postId, commentId);
+        Optional<PostComment> postComment = postCommentServiceTest.getPostComment(postId, commentId);
 
         assertTrue(postComment.isPresent(), "Комментарий поста должен присутствовать");
         PostComment postCommentInstance = postComment.get();
@@ -84,17 +88,17 @@ public class PostCommentServiceTest extends AbstractPostTest {
         String text = "Test Post " + postId + ", comment " + commentId;
 
         PostComment mockPostComment = new PostComment(commentId, text, postId);
-        when(postCommentRepository.createPostComment(postId, text)).thenReturn(Optional.of(mockPostComment));
-        doNothing().when(postRepository).increasePostCommentCount(postId);
+        when(postCommentRepositoryTest.createPostComment(postId, text)).thenReturn(Optional.of(mockPostComment));
+        doNothing().when(postRepositoryTest).increasePostCommentCount(postId);
 
-        Optional<PostComment> postComment = postCommentService.createPostComment(postId, text);
+        Optional<PostComment> postComment = postCommentServiceTest.createPostComment(postId, text);
 
         assertTrue(postComment.isPresent(), "Комментарий поста должен быть создан и получен");
         PostComment postCommentInstance = postComment.get();
         assertEquals(mockPostComment.getId(), postCommentInstance.getId(), "Идентификатор комментария должен совпадать с исходным");
         assertEquals(mockPostComment.getText(), postCommentInstance.getText(), "Текст комментария должен совпадать с исходным");
         assertEquals(mockPostComment.getPostId(), postCommentInstance.getPostId());
-        verify(postRepository).increasePostCommentCount(postId);
+        verify(postRepositoryTest).increasePostCommentCount(postId);
     }
 
     @Test
@@ -107,9 +111,9 @@ public class PostCommentServiceTest extends AbstractPostTest {
         PostComment mockPostComment = new PostComment(postCommentBeforeUpdate.getId(),
                 text,
                 postCommentBeforeUpdate.getPostId());
-        when(postCommentRepository.updatePostComment(postId, commentId, text)).thenReturn(Optional.of(mockPostComment));
+        when(postCommentRepositoryTest.updatePostComment(postId, commentId, text)).thenReturn(Optional.of(mockPostComment));
 
-        Optional<PostComment> postComment = postCommentService.updatePostComment(postId, commentId, text);
+        Optional<PostComment> postComment = postCommentServiceTest.updatePostComment(postId, commentId, text);
 
         assertTrue(postComment.isPresent(), "Комментарий поста должен быть обновлен и получен");
         PostComment postCommentInstance = postComment.get();
@@ -122,12 +126,12 @@ public class PostCommentServiceTest extends AbstractPostTest {
     void testDeletePost() {
         Long postId = 5L;
         Long commentId = 3L;
-        doNothing().when(postCommentRepository).deletePostComment(postId, commentId);
-        doNothing().when(postRepository).decreasePostCommentCount(postId);
+        doNothing().when(postCommentRepositoryTest).deletePostComment(postId, commentId);
+        doNothing().when(postRepositoryTest).decreasePostCommentCount(postId);
 
-        postCommentService.deletePostComment(postId, commentId);
+        postCommentServiceTest.deletePostComment(postId, commentId);
 
-        verify(postCommentRepository).deletePostComment(postId, commentId);
-        verify(postRepository).decreasePostCommentCount(postId);
+        verify(postCommentRepositoryTest).deletePostComment(postId, commentId);
+        verify(postRepositoryTest).decreasePostCommentCount(postId);
     }
 }

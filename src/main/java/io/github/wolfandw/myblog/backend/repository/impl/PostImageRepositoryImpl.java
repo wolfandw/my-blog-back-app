@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * Реализация {@link PostImageRepository}
  */
-@Repository
+@Repository("postImageRepository")
 public class PostImageRepositoryImpl implements PostImageRepository {
     private final JdbcTemplate jdbcTemplate;
     private final PostRepository postRepository;

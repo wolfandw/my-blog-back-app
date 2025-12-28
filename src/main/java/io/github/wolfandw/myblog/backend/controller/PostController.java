@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Реализация контроллера постов.
  */
-@RestController
+@RestController("postController")
 @RequestMapping("api/posts")
 public class PostController {
     private final PostService postService;

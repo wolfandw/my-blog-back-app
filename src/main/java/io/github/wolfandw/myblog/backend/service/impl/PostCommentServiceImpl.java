@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * Реализация {@link PostCommentService}
  */
-@Service
+@Service("postCommentService")
 public class PostCommentServiceImpl implements PostCommentService {
     private final PostRepository postRepository;
     private final PostCommentRepository postCommentRepository;

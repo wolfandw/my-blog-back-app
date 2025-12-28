@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Реализация {@link PostService}
  */
-@Service
+@Service("postService")
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostImageService postImageService;
