@@ -2,14 +2,11 @@ package io.github.wolfandw.myblog.backend.test.service;
 
 import io.github.wolfandw.myblog.backend.model.Post;
 import io.github.wolfandw.myblog.backend.model.PostsPage;
-import io.github.wolfandw.myblog.backend.repository.PostCommentRepository;
-import io.github.wolfandw.myblog.backend.repository.PostRepository;
 import io.github.wolfandw.myblog.backend.service.PostService;
 import io.github.wolfandw.myblog.backend.test.AbstractPostTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 import java.util.Map;
@@ -26,24 +23,12 @@ import static org.mockito.Mockito.*;
  */
 public class PostServiceTest extends AbstractPostTest {
     @Autowired
-    @Qualifier("postServiceTest")
-    private PostService postServiceTest;
-
-    @Autowired
-    @Qualifier("postRepositoryTest")
-    private PostRepository postRepositoryTest;
-
-    @Autowired
-    @Qualifier("postCommentRepositoryTest")
-    private PostCommentRepository postCommentRepositoryTest;
+    private PostService postService;
 
     private Map<Long, Post> posts = new TreeMap<>();
 
     @BeforeEach
     void setUp() {
-        reset(postRepositoryTest);
-        reset(postCommentRepositoryTest);
-
         posts = LongStream.range(1, 16).boxed().collect(TreeMap::new, (m, postId) ->
                 m.put(postId, new Post(postId, "Test Post " + postId + " title",
                         "Test Post " + postId + "  text",
@@ -64,12 +49,12 @@ public class PostServiceTest extends AbstractPostTest {
         List<Post> mockPosts = posts.values().stream()
                 .filter(p -> p.getId() > ((pageNumber - 1) * pageSize) && p.getId() < (pageNumber * pageSize + 1))
                 .toList();
-        when(postRepositoryTest.getPosts(List.of(), List.of(), pageNumber, pageSize))
+        when(postRepository.getPosts(List.of(), List.of(), pageNumber, pageSize))
                 .thenReturn(mockPosts);
         int postsCount = posts.size(); // 15
-        when(postRepositoryTest.getPostsCount(List.of(), List.of())).thenReturn(postsCount);
+        when(postRepository.getPostsCount(List.of(), List.of())).thenReturn(postsCount);
 
-        PostsPage postsPage = postServiceTest.getPostsPage("", pageNumber, pageSize);
+        PostsPage postsPage = postService.getPostsPage("", pageNumber, pageSize);
         assertNotNull(postsPage, "Страница постов не может быть null");
         assertArrayEquals(mockPosts.toArray(), postsPage.getPosts().toArray(), "Список постов должен соответствовать исходному");
         assertEquals(hasPrev, postsPage.hasPrev(), "Наличие предыдущей страницы должено соответствовать исходному");
@@ -85,12 +70,12 @@ public class PostServiceTest extends AbstractPostTest {
         List<Post> mockPosts = posts.values().stream()
                 .filter(p -> p.getId() > ((pageNumber - 1) * pageSize) && p.getId() < (pageNumber * pageSize + 1))
                 .toList();
-        when(postRepositoryTest.getPosts(List.of(), List.of(), pageNumber, pageSize))
+        when(postRepository.getPosts(List.of(), List.of(), pageNumber, pageSize))
                 .thenReturn(mockPosts);
         int postsCount = posts.size(); // 15
-        when(postRepositoryTest.getPostsCount(List.of(), List.of())).thenReturn(postsCount);
+        when(postRepository.getPostsCount(List.of(), List.of())).thenReturn(postsCount);
 
-        PostsPage postsPage = postServiceTest.getPostsPage(null, -1, -1);
+        PostsPage postsPage = postService.getPostsPage(null, -1, -1);
         assertNotNull(postsPage, "Страница постов не может быть null");
     }
 
@@ -98,8 +83,8 @@ public class PostServiceTest extends AbstractPostTest {
     void testGetPost() {
         Long postId = 5L;
         Post mockPost = posts.get(postId);
-        when(postRepositoryTest.getPost(postId)).thenReturn(Optional.of(mockPost));
-        Optional<Post> post = postServiceTest.getPost(postId);
+        when(postRepository.getPost(postId)).thenReturn(Optional.of(mockPost));
+        Optional<Post> post = postService.getPost(postId);
 
         assertTrue(post.isPresent(), "Пост должен быть получен");
 
@@ -124,8 +109,8 @@ public class PostServiceTest extends AbstractPostTest {
         int commentsCount = 0;
         String imageName = postId + ".png";
         Post mockPost = new Post(postId, title, text, tags, likesCount, commentsCount, imageName);
-        when(postRepositoryTest.createPost(title, text, tags)).thenReturn(Optional.of(mockPost));
-        Optional<Post> post = postServiceTest.createPost(title, text, tags);
+        when(postRepository.createPost(title, text, tags)).thenReturn(Optional.of(mockPost));
+        Optional<Post> post = postService.createPost(title, text, tags);
 
         assertTrue(post.isPresent(), "Пост должен быть создан и получен");
 
@@ -154,8 +139,8 @@ public class PostServiceTest extends AbstractPostTest {
                 postBeforeUpdate.getLikesCount(),
                 postBeforeUpdate.getCommentsCount(),
                 postBeforeUpdate.getImageName());
-        when(postRepositoryTest.updatePost(postId, title, text, tags)).thenReturn(Optional.of(mockPost));
-        Optional<Post> post = postServiceTest.updatePost(postId, title, text, tags);
+        when(postRepository.updatePost(postId, title, text, tags)).thenReturn(Optional.of(mockPost));
+        Optional<Post> post = postService.updatePost(postId, title, text, tags);
 
         assertTrue(post.isPresent(), "Пост должен быть обновлен и получен");
 
@@ -174,13 +159,13 @@ public class PostServiceTest extends AbstractPostTest {
     @Test
     void testDeletePost() {
         Long postId = 5L;
-        doNothing().when(postCommentRepositoryTest).deletePostComments(postId);
-        doNothing().when(postRepositoryTest).deletePost(postId);
+        doNothing().when(postCommentRepository).deletePostComments(postId);
+        doNothing().when(postRepository).deletePost(postId);
 
-        postServiceTest.deletePost(postId);
+        postService.deletePost(postId);
 
-        verify(postCommentRepositoryTest).deletePostComments(postId);
-        verify(postRepositoryTest).deletePost(postId);
+        verify(postCommentRepository).deletePostComments(postId);
+        verify(postRepository).deletePost(postId);
     }
 
     @Test
@@ -188,8 +173,8 @@ public class PostServiceTest extends AbstractPostTest {
         Long postId = 5L;
         Post postBeforeUpdate = posts.get(postId);
         int beforeLikesCount = postBeforeUpdate.getLikesCount();
-        when(postRepositoryTest.increasePostLikesCount(postId)).thenReturn(beforeLikesCount + 1);
-        int likesCount = postServiceTest.increasePostLikesCount(postId);
+        when(postRepository.increasePostLikesCount(postId)).thenReturn(beforeLikesCount + 1);
+        int likesCount = postService.increasePostLikesCount(postId);
 
         assertEquals(beforeLikesCount + 1, likesCount, "Количество лайков должно увеличиться на 1");
     }
