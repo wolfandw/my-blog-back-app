@@ -1,0 +1,39 @@
+package io.github.wolfandw.myblog.backend.itest.controller;
+
+import io.github.wolfandw.myblog.backend.controller.PostImageController;
+import io.github.wolfandw.myblog.backend.itest.AbstractPostIntegrationTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * Интеграционный тест контроллера {@link PostImageController}
+ */
+public class PostImageControllerIntegrationTest extends AbstractPostIntegrationTest {
+    @Test
+    void getPostsPageTest() throws Exception {
+        mockMvc.perform(get("/api/posts/1/image"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(content().bytes(new byte[0]));
+    }
+
+    @Test
+    void updatePostImageTest() throws Exception {
+        mockMvc.perform(multipart("/api/posts/1/image")
+                        .file(new MockMultipartFile("image",
+                                "1.jpg",
+                                MediaType.IMAGE_JPEG_VALUE,
+                                new byte[]{1, 2, 3}))
+                        .with(requestPostProcessor -> {
+                            requestPostProcessor.setMethod("PUT");
+                            return requestPostProcessor;
+                        }))
+                .andExpect(status().isOk());
+    }
+}
